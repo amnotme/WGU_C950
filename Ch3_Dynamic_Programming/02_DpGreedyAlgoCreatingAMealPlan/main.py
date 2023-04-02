@@ -48,6 +48,42 @@ def create_meal_plan(foods, nutrient, goal):
     # A greedy algorithm to create a meal plan that has MAX_CALORIES
     # calories and the goal amount of the nutrient (e.g. 30% protein)
     plan = MealPlan()
+    sort_food_list(foods, nutrient)
+
+    for food in foods:
+        if food.calories == 0 and getattr(food, nutrient) == 0: continue
+
+        # Calculate the calorie_fraction of food allowed to fit the calorie limit;
+        calorie_fraction = plan.fraction_to_fit_calories_limit(food, MAX_CALORIES)
+
+        # Check portion amount.
+        if calorie_fraction >= 1.0:
+            # If whole ammount fits in calories, Check if portion surpasses nutrient goal.
+            if plan.percent_nutrient_with_food(food, nutrient) <= goal + NUTRIENT_THRESHOLD:
+                # If whole meal fits, added and continue
+                plan.add_food(food)
+            else:
+                # If only a calorie_fraction will fit calculate the calorie_fraction amount by nutrient.
+                nutrient_fraction = plan.fraction_to_fit_nutrient_goal(food,nutrient, goal)
+
+                # Set the calorie_fraction and add.
+                if nutrient_fraction > FRACTION_THRESHOLD:
+                    food.set_fraction(nutrient_fraction)
+                    plan.add_food(food)
+        else:
+            # If calorie in a single proportion is too high, check if a calorie_fraction will meet requirements.
+            if calorie_fraction > CALORIE_THRESHOLD:
+
+                # calculate the portion needed to hit calorie goal
+                nutrient_fraction = plan.fraction_to_fit_nutrient_goal(food, nutrient, goal)
+                if nutrient_fraction > FRACTION_THRESHOLD:
+                    # Set foods fraction to the smaller of total calorie or nutrient fraction and add.
+                    food.set_fraction(min(calorie_fraction, nutrient_fraction))
+                    plan.add_food(food)
+        # Check if both goals are reached, exit loop if true.
+        if plan.meets_calorie_limit(MAX_CALORIES, CALORIE_THRESHOLD) and plan.meets_nutrient_goal(nutrient, goal, NUTRIENT_THRESHOLD):
+            break
+
     return plan
 
 def print_menu():
