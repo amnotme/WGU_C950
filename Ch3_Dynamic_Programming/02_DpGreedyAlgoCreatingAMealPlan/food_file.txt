@@ -1,0 +1,6 @@
+Beef, brisket, flat half, separable lean and fat, trimmed to 1/8" fat, choice, raw (1 steak / 434.0 grams):78.6408,0.5208,96.131,1206.52
+Turkey, retail parts, drumstick, meat and skin, cooked, roasted (1 drumstick / 275.0 grams):77.5775,9.9,25.7675,173.7324451060661
+Fast foods, submarine sandwich, turkey, roast beef and ham on white bread with lettuce and tomato (12 inch sub / 413.0 grams):44,0258,84.0868,9.9946,602.98
+Cheese, mozzarella, nonfat (1 cup, shredded / 113.0 grams):35.821,3.944,0.0,7.994114976331346
+Gravy, au jus, canned (1 can / 298.0 grams):3.576,7.45,0.596,8.773438917602562
+  

@@ -12,6 +12,31 @@ def load_nutrient_data(filename):
     # Open file, read food items one line at a time,
     # create Food objects and append them to a list.
     # Return the list once the entire file is processed.
+
+    foods_list: list = []
+    try:
+        with open(filename, 'r') as file:
+            reader = file.read()
+            for row in reader.strip().split('\n'):
+                data = row.split(':')
+                name = data[0]
+
+                raw_values = data[1].split(',')
+                sanitized_values = [ float(val.strip()) for val in raw_values ]
+                if len(sanitized_values) < 4:
+                    raise Exception("There are not enough values")
+                else:
+                    food = Food(
+                        name=name,
+                        protein=sanitized_values[0],
+                        fat=sanitized_values[1],
+                        carbs=sanitized_values[2],
+                        calories=sanitized_values[3]
+                        )
+                    foods_list.append(food)
+    except Exception as ex:
+        print(f"{ex}")
+    print(foods_list)
     return []
 
 def sort_food_list(foods, nutrient):
@@ -37,7 +62,7 @@ def print_menu():
 if __name__ == "__main__":
     # 1. Load the food data from the file (change this to a user
     # prompt for the filename)
-    filename = food_data_small.txt
+    filename = input()
     foods = load_nutrient_data(filename)
 
     # 2. Display menu and get user's choice. Repeat menu until a
@@ -47,7 +72,7 @@ if __name__ == "__main__":
     # until a valid choice is entered by the user (0-100, inclusive)
 
     # 4. Run greedy algorithm to create the meal plan.
-    plan = createMealPlan(foods, nutrient, goal)
+    # plan = createMealPlan(foods, nutrient, goal)
 
     # 5. Display plan.
-    print(plan)
+    # print(plan)
