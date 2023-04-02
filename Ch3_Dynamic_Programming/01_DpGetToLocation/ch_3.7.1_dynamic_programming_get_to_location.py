@@ -67,7 +67,6 @@ def main():
 
 
 
-
     print(f"Point P: ({point.x},{point.y})")
     print(f"Arrival point: ({old_point.x},{old_point.y})")
     print(f"Distance between P and arrival: {original_distance:.6f}")
