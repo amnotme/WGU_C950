@@ -69,10 +69,10 @@ Process runtimes are stored in a list, so calling `load_data()` with the above
 
 Three sample data files have been added to the lab for testing. You are encouraged to make your own data files and test your code on your own computer outside of the zyLab development environment. The main program uses the data file from the filename given as a command line argument.
 
-|  | Filename | Filename | Filename |
-| --- | --- | --- | --- |
-|  | processes_input1.txt | processes_input2.txt | processes_input3.txt |
-| FileContents | 4
+| Filename | Filename | Filename |
+| --- | --- | --- |
+| processes_input1.txt | processes_input2.txt | processes_input3.txt |
+| 4
 10
 3
 2
@@ -84,7 +84,8 @@ Three sample data files have been added to the lab for testing. You are encourag
 3
 1
 6
-9 | 2
+9 |
+2
 10
 4
 8
@@ -96,7 +97,8 @@ Three sample data files have been added to the lab for testing. You are encourag
 18
 43
 19
-12 | 8
+12 |
+8
 12
 18
 40
@@ -116,7 +118,6 @@ Three sample data files have been added to the lab for testing. You are encourag
 19
 42
 17 |
-
 ## Schedulers
 
 A scheduler is a function that is used by the simulation to decide, when appropriate, which process is to be assigned to which processor. The first argument is the list of processes that remain and are waiting to be run. The second parameter is a list with one integer per processor; the value is the next time step that the processor is available. Ex: If two processors exist, the second argument could be `[27, 41]`, meaning the Processor 0 will be available at time step 27, and Processor 1 will be available at time step 41.
