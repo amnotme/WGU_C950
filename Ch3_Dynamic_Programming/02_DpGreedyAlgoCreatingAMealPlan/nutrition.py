@@ -49,25 +49,43 @@ class MealPlan:
             return 0.0
 
     def fraction_to_fit_calories_limit(self, food, calorie_limit):
-        # Returns the fraction (0.0-1.0) of the food required to get
-        # the calorie limit.
-        return 1.0
+        if food.calories == 0:
+            return 1.0
+        fraction = (calorie_limit - self.total_calories) / food.calories
+        return self._return_appropriate_fraction(fraction)
+
 
     def fraction_to_fit_nutrient_goal(self, food, nutrient, goal):
-        # Returns the fraction (0.0-1.0) of the food required to get
-        # the nutrient goal.
-        return 1.0
+        denominator = getattr(food, '%s_calories' % nutrient) - goal * food.calories
+        if denominator == 0:
+            return 1.0
+        fraction = (goal * self.total_calories - getattr(self, 'total_%s_calories' % nutrient)) / denominator
+        return self._return_appropriate_fraction(fraction)
+
+
+    def _return_appropriate_fraction(self, fraction):
+        if fraction >= 1.0:
+            return 1.0
+        if fraction <= 0.0:
+            return 0.0
+        return fraction
 
     def meets_calorie_limit(self, calorie_limit, threshold):
         # Returns True if the total calories of the current meal plan
         # is within the specified threshold of the given calorie limit.
-        return True
+        difference = calorie_limit - self.total_calories
+        return self._is_within_threshold(difference, threshold)
 
     def meets_nutrient_goal(self, nutrient, goal, threshold):
         # Returns True if the total calorie contribution (by percent) of the
         # given nutrient ('protein', 'carbs' or 'fat') for the current
         # meal plan is within the specified threshold of the given goal.
-        return True
+        difference = goal - self.percent_nutrient(nutrient)
+        return self._is_within_threshold(difference, threshold)
+
+    def _is_within_threshold(self, difference, threshold):
+        return -(threshold) <= difference and difference <= threshold
+
 
     def __str__(self):
         s = ""
