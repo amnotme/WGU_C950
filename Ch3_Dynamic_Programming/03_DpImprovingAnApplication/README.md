@@ -72,52 +72,7 @@ Three sample data files have been added to the lab for testing. You are encourag
 | Filename | Filename | Filename |
 | --- | --- | --- |
 | processes_input1.txt | processes_input2.txt | processes_input3.txt |
-| 4
-10
-3
-2
-15
-4
-8
-10
-7
-3
-1
-6
-9 |
-2
-10
-4
-8
-1
-7
-16
-22
-9
-18
-43
-19
-12 |
-8
-12
-18
-40
-7
-15
-2
-27
-16
-35
-25
-10
-5
-18
-37
-21
-30
-19
-42
-17 |
+| 4 10 3 2 15 4 8 10 7 3 1 6 9 | 2 10 4 8 1 7 16 22 9 18 43 19 12 | 8 12 18 40 7 15 2 27 16 35 25 10 5 18 37 21 30 19 42 17 |
 ## Schedulers
 
 A scheduler is a function that is used by the simulation to decide, when appropriate, which process is to be assigned to which processor. The first argument is the list of processes that remain and are waiting to be run. The second parameter is a list with one integer per processor; the value is the next time step that the processor is available. Ex: If two processors exist, the second argument could be `[27, 41]`, meaning the Processor 0 will be available at time step 27, and Processor 1 will be available at time step 41.
