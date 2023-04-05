@@ -140,58 +140,57 @@ Given a key, a BST ***remove*** operation removes the first-found matching nod
 - *Remove a leaf node:* If X has a parent (so X is not the root), the parent's left or right child (whichever points to X) is assigned with null. Else, if X was the root, the root pointer is assigned with null, and the BST is now empty.
 - *Remove an internal node with single child:* If X has a parent (so X is not the root), the parent's left or right child (whichever points to X) is assigned with X's single child. Else, if X was the root, the root pointer is assigned with X's single child.
 - *Remove an internal node with two children:* This case is the hardest. First, the algorithm locates X's successor (the leftmost child of X's right subtree), and copies the successor to X. Then, the algorithm recursively removes the successor from the right subtree.
-
 ```python
 BSTRemove(tree, key) {
    par = null
    cur = tree->root
-while (cur is not null) { // Search for node
-if (cur->key == key) { // Node found
-if (!cur->left && !cur->right) {        // Remove leaf
-if (!par) // Node is root
+   while (cur is not null) { // Search for node
+      if (cur->key == key) { // Node found
+         if (!cur->left && !cur->right) {        // Remove leaf
+            if (!par) // Node is root
                tree->root = null
-elseif (par->left == cur)
+            else if (par->left == cur)
                par->left = null
-else
+            else
                par->right = null
          }
-elseif (cur->left && !cur->right) {    // Remove node with only left child
-if (!par) // Node is root
+         else if (cur->left && !cur->right) {    // Remove node with only left child
+            if (!par) // Node is root
                tree->root = cur->left
-elseif (par->left == cur)
+            else if (par->left == cur)
                par->left = cur->left
-else
+            else
                par->right = cur->left
          }
-elseif (!cur->left && cur->right) {    // Remove node with only right child
-if (!par) // Node is root
+         else if (!cur->left && cur->right) {    // Remove node with only right child
+            if (!par) // Node is root
                tree->root = cur->right
-elseif (par->left == cur)
+            else if (par->left == cur)
                par->left = cur->right
-else
+            else
                par->right = cur->right
          }
-else {                                  // Remove node with two children
+         else {                                  // Remove node with two children
             // Find successor (leftmost child of right subtree)
             suc = cur->right
-while (suc->left is not null)
+            while (suc->left is not null)
                suc = suc->left
             successorData = Create copy of suc's data
             BSTRemove(tree, suc->key)     // Remove successor
             Assign cur's data with successorData
          }
-return // Node found and removed
+         return // Node found and removed
       }
-elseif (cur->key < key) { // Search right
+      else if (cur->key < key) { // Search right
          par = cur
          cur = cur->right
       }
-else {                     // Search left
+      else {                     // Search left
          par = cur
          cur = cur->left
       }
    }
-return // Node not found
+   return // Node not found
 }
 ```
 
