@@ -199,3 +199,27 @@ BST remove algorithm complexity
 The BST remove algorithm traverses the tree from the root to find the node to remove. When the node being removed has 2 children, the node's successor is found and a recursive call is made. One node is visited per level, and in the worst case scenario the tree is traversed twice from the root to a leaf. A BST with $N$ nodes has at least $log2N$ levels and at most $N$ $$levels. Therefore, the runtime complexity of removal is best case $O(logN)$ and worst case $O(N).$
 
 Two pointers are used to traverse the tree during removal. When the node being removed has 2 children, a third pointer and a copy of one node's data are also used, and one recursive call is made. Thus, the space complexity of removal is always $O(1)$.
+
+
+# **4.7 BST inorder traversal**
+
+A ***tree traversal*** algorithm visits all nodes in the tree once and performs an operation on each node. An ***inorder traversal*** visits all nodes in a BST from smallest to largest, which is useful for example to print the tree's nodes in sorted order. Starting from the root, the algorithm recursively prints the left subtree, the current node, and the right subtree.
+
+```python
+BSTPrintInorder(node) {
+if (node is null)
+return
+
+  BSTPrintInorder(node->left)
+  Print node
+  BSTPrintInorder(node->right)
+}
+```
+
+# **4.8 BST height and insertion order**
+
+Recall that a tree's ***height*** is the maximum edges from the root to any leaf. (Thus, a one-node tree has height 0.)
+
+The *minimum* N-node binary tree height is $ℎ=|log2N|$ , achieved when each level is full except possibly the last. The *maximum* N-node binary tree height is N - 1 (the - 1 is because the root is at height 0).
+
+Searching a BST is fast if the tree's height is near the minimum. Inserting items in random order naturally keeps a BST's height near the minimum. In contrast, inserting items in nearly-sorted order leads to a nearly-maximum tree height.
