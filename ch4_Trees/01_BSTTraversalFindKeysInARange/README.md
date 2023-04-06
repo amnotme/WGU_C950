@@ -43,3 +43,63 @@ the output ends with
 Keys in range: ['ding', 'last', 'name']
 
 ```
+
+input:
+
+```python
+3 7 2 8 4 9 5 1 6
+2
+6
+4
+```
+
+expected output:
+
+```python
+Keys in range: ['4', '5', '6']
+```
+
+input:
+
+```python
+3 7 2 8 4 9 5 1 6
+1
+9
+3
+```
+
+expected output:
+
+```python
+Keys in range: ['1', '2', '3', '4', '5', '6', '7', '8', '9']
+```
+
+input:
+
+```python
+all able asinine acquit ardent aardvark animal apple advent
+acquire
+allow
+able
+```
+
+expected output:
+
+```python
+Keys in range: ['acquit', 'advent']
+```
+
+input:
+
+```python
+all able asinine acquit ardent aardvark animal apple advent
+acquire
+allow
+ardent
+```
+
+expected output:
+
+```python
+Keys in range: []
+```
