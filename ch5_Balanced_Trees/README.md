@@ -121,3 +121,67 @@ AVLTreeRebalance(tree, node) {
    return node
 }
 ```
+
+# 5.3 AVL insertions
+
+**Insertions requiring rotations to rebalance**
+
+Inserting an item into an AVL tree may cause the tree to become unbalanced. A rotation can rebalance the tree.
+
+**Four imbalance cases**
+
+After inserting a node, nodes on the path from the new node to the root should be checked for a balance factor of 2 or -2. The first such node P triggers rebalancing. Four cases exist, distinguishable by the balance factor of node P and one of P's children.
+
+**Insertion with rebalancing**
+
+An AVL tree insertion involves searching for the insert location, inserting the new node, updating balance factors, and rebalancing.
+
+Balance factor updates are only needed on nodes ascending along the path from the inserted node up to the root, since no other nodes' balance could be affected. Each node's balance factor can be recomputed by determining left and right subtree heights, or for speed can be stored in each node and then incrementally updated: +1 if ascending from a left child, -1 if from a right child. If a balance factor update yields 2 or -2, the imbalance case is determined via that node's left (for 2) or right (for -2) child's balance factor, and the appropriate rotations performed.
+
+**AVL insertion algorithm**
+
+Insertion starts with the standard BST insertion algorithm. After inserting a node, all ancestors of the inserted node, from the parent up to the root, are rebalanced. A node is rebalanced by first computing the node's balance factor, then performing rotations if the balance factor is outside of the range [-1,1].
+
+```python
+AVLTreeInsert(tree, node) {
+   if (tree->root == null) {
+      tree->root = node
+      node->parent = null
+      return
+   }
+
+   cur = tree->root
+   while (cur != null) {
+      if (node->key < cur->key) {
+         if (cur->left == null) {
+            cur->left = node
+            node->parent = cur
+            cur = null
+         }
+         else
+            cur = cur->left
+      }
+      else {
+         if (cur->right == null) {
+            cur->right = node
+            node->parent = cur
+            cur = null
+         }
+         else
+            cur = cur->right
+      }
+   }
+
+   node = node->parent
+   while (node != null) {
+      AVLTreeRebalance(tree, node)
+      node = node->parent
+   }
+}
+```
+
+**AVL insertion algorithm complexity**
+
+The AVL insertion algorithm traverses the tree from the root to a leaf node to find the insertion point, then traverses back up to the root to rebalance. One node is visited per level, and at most 2 rotations are needed for a single node. Each rotation is an O(1) operation. Therefore, the runtime complexity of insertion is O(log N).
+
+Because a fixed number of temporary pointers are needed for the AVL insertion algorithm, including any rotations, the space complexity is O(1).
