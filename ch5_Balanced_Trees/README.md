@@ -185,3 +185,135 @@ AVLTreeInsert(tree, node) {
 The AVL insertion algorithm traverses the tree from the root to a leaf node to find the insertion point, then traverses back up to the root to rebalance. One node is visited per level, and at most 2 rotations are needed for a single node. Each rotation is an O(1) operation. Therefore, the runtime complexity of insertion is O(log N).
 
 Because a fixed number of temporary pointers are needed for the AVL insertion algorithm, including any rotations, the space complexity is O(1).
+
+
+```Python
+AVLTreeRemoveNode(tree, node) {
+   if (node == null)
+      return false
+   . # BST removal
+   .
+   .
+   node = parent
+   while (node != null) {
+      AVLTreeRebalance(tree, node)            
+      node = node->parent
+   }
+   return true
+}
+
+AVLTreeRebalance(tree, node) {
+   AVLTreeUpdateHeight(node)        
+   if (AVLTreeGetBalance(node) == -2) {
+      if (AVLTreeGetBalance(node->right) == 1) {
+         // Double rotation case.
+         AVLTreeRotateRight(tree, node->right)
+      }
+      return AVLTreeRotateLeft(tree, node)
+   }
+   else if (AVLTreeGetBalance(node) == 2) {
+      if (AVLTreeGetBalance(node->left) == -1) {
+         // Double rotation case.
+         AVLTreeRotateLeft(tree, node->left)
+      }
+      return AVLTreeRotateRight(tree, node)
+   }        
+   return node
+}
+```
+
+AVLTreeRebalance algorithm.
+
+```python
+AVLTreeRebalance(tree, node) {
+   AVLTreeUpdateHeight(node)
+if (AVLTreeGetBalance(node) == -2) {
+if (AVLTreeGetBalance(node->right) == 1) {
+         // Double rotation case.
+         AVLTreeRotateRight(tree, node->right)
+      }
+return AVLTreeRotateLeft(tree, node)
+   }
+elseif (AVLTreeGetBalance(node) == 2) {
+if (AVLTreeGetBalance(node->left) == -1) {
+         // Double rotation case.
+         AVLTreeRotateLeft(tree, node->left)
+      }
+return AVLTreeRotateRight(tree, node)
+   }
+return node
+}
+```
+
+AVLTreeRemoveKey algorithm.
+
+```python
+AVLTreeRemoveKey(tree, key) {
+   node = BSTSearch(tree, key)
+return AVLTreeRemoveNode(tree, node)
+}
+```
+
+AVLTreeRemoveNode algorithm.
+
+```python
+AVLTreeRemoveNode(tree, node) {
+   if (node == null)
+      return false
+
+   // Parent needed for rebalancing
+   parent = node->parent
+
+   // Case 1: Internal node with 2 children
+   if (node->left != null && node->right != null) {
+      // Find successor
+      succNode = node->right
+      while (succNode->left != null)
+         succNode = succNode->left
+
+      // Copy the value from the node
+      node = Copy succNode
+
+      // Recursively remove successor
+      AVLTreeRemoveNode(tree, succNode)
+
+      // Nothing left to do since the recursive call will have rebalanced
+      return true
+   }
+
+   // Case 2: Root node (with 1 or 0 children)
+   else if (node == tree->root) {
+      if (node->left != null)
+         tree->root = node->left
+      else
+         tree->root = node->right
+
+      if (tree->root)
+         tree->root->parent = null
+
+      return true
+   }
+
+   // Case 3: Internal with left child only
+   else if (node->left != null)
+      AVLTreeReplaceChild(parent, node, node->left)
+
+   // Case 4: Internal with right child only OR leaf
+   else
+      AVLTreeReplaceChild(parent, node, node->right)
+
+   // node is gone. Anything that was below node that has persisted is already correctly
+   // balanced, but ancestors of node may need rebalancing.
+   node = parent
+   while (node != null) {
+      AVLTreeRebalance(tree, node)            
+      node = node->parent
+   }
+   return true
+}
+```
+
+AVL removal algorithm complexity
+In the worst case scenario, the AVL removal algorithm traverses the tree from the root to the lowest level to find the node to remove, then traverses back up to the root to rebalance. One node is visited per level, and at most 2 rotations are needed for a single node. Each rotation is an O(1) operation. Therefore, the runtime complexity of an AVL tree removal is O(log N).
+
+Because a fixed number of temporary pointers are needed for the AVL removal algorithm, including any rotations, the space complexity is O(1).
