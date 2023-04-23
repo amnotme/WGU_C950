@@ -196,3 +196,54 @@ g.add_undirected_edge(vertex_c, vertex_d, 10562)
 **Graph traversal and depth-first search**
 
 An algorithm commonly must visit every vertex in a graph in some order, known as a ***graph traversal***. A ***depth-first search*** (DFS) is a traversal that visits a starting vertex, then visits every vertex along each path starting from that vertex to the path's end before backtracking.
+
+**Depth-first search algorithm**
+
+An algorithm for depth-first search pushes the starting vertex to a stack. While the stack is not empty, the algorithm pops the vertex from the top of the stack. If the vertex has not already been visited, the algorithm visits the vertex and pushes the adjacent vertices to the stack.
+
+```Python
+DFS(startV) {
+   Push startV to stack
+
+   while ( stack is not empty ) {
+      currentV = Pop stack
+      if ( currentV is not in visitedSet ) {
+         "Visit" currentV
+         Add currentV to visitedSet
+         for each vertex adjV adjacent to currentV
+            Push adjV to stack
+      }
+   }
+}
+```
+
+**Recursive DFS algorithm**
+
+A recursive DFS can be implemented using the program stack instead of an explicit stack. The recursive DFS algorithm is first called with the starting vertex. If the vertex has not already been visited, the recursive algorithm visits the vertex and performs a recursive DFS call for each adjacent vertex.
+
+```Python
+
+RecursiveDFS(currentV) {
+   if ( currentV is not in visitedSet ) {
+      Add currentV to visitedSet
+      "Visit" currentV
+      for each vertex adjV adjacent to currentV
+         RecursiveDFS(adjV)
+   }
+}
+```
+
+# 6.9 Directed graphs
+
+**Directed graphs**
+
+A ***directed graph***, or ***digraph***, consists of vertices connected by directed edges. A ***directed edge*** is a connection between a starting vertex and a terminating vertex. In a directed graph, a vertex Y is ***adjacent*** to a vertex X, if there is an edge from X to Y.
+
+Many graphs are directed, like those representing links between web pages, maps for navigation, or college course prerequisites.
+
+**Paths and cycles**
+
+In a directed graph:
+
+- A ***path*** is a sequence of directed edges leading from a source (starting) vertex to a destination (ending) vertex.
+- A ***cycle*** is path that starts and ends at the same vertex. A directed graph is ***cyclic*** if the graph contains a cycle, and ***acyclic*** if the graph does not contain a cycle.
