@@ -4,8 +4,6 @@ from graphviz import Digraph
 import matplotlib.pyplot as plt
 import networkx as nx
 
-
-
 # Breadth-first search function
 def breadth_first_search(graph, start_vertex):
     discovered_set = []
@@ -37,8 +35,6 @@ vertex_f = Vertex('Jun')
 vertex_g = Vertex('Ken')
 vertices = [vertex_a, vertex_b, vertex_c, vertex_d, vertex_e, vertex_f, vertex_g]
 
-
-
 g.add_vertex(vertex_a)
 g.add_vertex(vertex_b)
 g.add_vertex(vertex_c)
@@ -46,8 +42,6 @@ g.add_vertex(vertex_d)
 g.add_vertex(vertex_e)
 g.add_vertex(vertex_f)
 g.add_vertex(vertex_g)
-
-
 
 # Building graph
 g.add_undirected_edge(vertex_a, vertex_b)  # Edge from Joe to Eva
@@ -61,7 +55,6 @@ g.add_undirected_edge(vertex_f, vertex_g)  # Edge from Jun to Ken
 
 
 # create a directed multi-graph
-# G = nx.MultiDiGraph()
 g.graph.add_edges_from(g.edges_to_graph)
 
 plt.figure(figsize=(8,8))
