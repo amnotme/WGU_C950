@@ -190,3 +190,9 @@ g.add_undirected_edge(vertex_b, vertex_c, 3425)
 g.add_undirected_edge(vertex_b, vertex_d, 9868)
 g.add_undirected_edge(vertex_c, vertex_d, 10562)
 ```
+
+# 6.8 Graphs: Depth-first search
+
+**Graph traversal and depth-first search**
+
+An algorithm commonly must visit every vertex in a graph in some order, known as a ***graph traversal***. A ***depth-first search*** (DFS) is a traversal that visits a starting vertex, then visits every vertex along each path starting from that vertex to the path's end before backtracking.
