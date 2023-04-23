@@ -255,3 +255,71 @@ A patient needing a kidney transplant may have a family member willing to donate
 ![https://zytools.zybooks.com/zyAuthor/DataStructures/46/IMAGES/embedded_image_1_cd899718-f11d-49cb-a55b-5fab6177ba01_uvarMp7wYIBBdZ54B4kq.png](https://zytools.zybooks.com/zyAuthor/DataStructures/46/IMAGES/embedded_image_1_cd899718-f11d-49cb-a55b-5fab6177ba01_uvarMp7wYIBBdZ54B4kq.png)
 
 In this graph, vertices represent patients, and edges represent compatibility between a patient's family member (shown in parentheses) and another patient. An N-way kidney transplant is represented as a cycle with N edges. Due the complexity of coordinating multiple simultaneous surgeries, hospitals and doctors typically try to find the shortest possible cycle.
+
+
+# 6.10 Weighted graphs
+
+**Weighted graphs**
+
+A ***weighted graph*** associates a weight with each edge. A graph edge's ***weight***, or ***cost***, represents some numerical value between vertex items, such as flight cost between airports, connection speed between computers, or travel time between cities. A weighted graph may be directed or undirected.
+
+**Path length in weighted graphs**
+
+In a weighted graph, the ***path length*** is the sum of the edge weights in the path.
+
+**Negative edge weight cycles**
+
+The ***cycle length*** is the sum of the edge weights in a cycle. A ***negative edge weight cycle*** has a cycle length less than 0. A shortest path does not exist in a graph with a negative edge weight cycle, because each loop around the negative edge weight cycle further decreases the cycle length, so no minimum exists.
+
+# 6.11 Algorithm: Dijkstra's shortest path
+
+**Dijkstra's shortest path algorithm**
+
+Finding the shortest path between vertices in a graph has many applications. Ex: Finding the shortest driving route between two intersections can be solved by finding the shortest path in a directed graph where vertices are intersections and edge weights are distances. If edge weights instead are expected travel times (possibly based on real-time traffic data), finding the shortest path will provide the fastest driving route.
+
+***Dijkstra's shortest path algorithm***, created by Edsger Dijkstra, determines the shortest path from a start vertex to each vertex in a graph. For each vertex, Dijkstra's algorithm determines the vertex's distance and predecessor pointer. A vertex's ***distance*** is the shortest path distance from the start vertex. A vertex's ***predecessor pointer*** points to the previous vertex along the shortest path from the start vertex.
+
+Dijkstra's algorithm initializes all vertices' distances to infinity (∞), initializes all vertices' predecessors to 0, and pushes all vertices to a queue of unvisited vertices. The algorithm then assigns the start vertex's distance with 0. While the queue is not empty, the algorithm pops the vertex with the shortest distance from the queue. For each adjacent vertex, the algorithm computes the distance of the path from the start vertex to the current vertex and continuing on to the adjacent vertex. If that path's distance is shorter than the adjacent vertex's current distance, a shorter path has been found. The adjacent vertex's current distance is updated to the distance of the newly found shorter path's distance, and vertex's predecessor pointer is pointed to the current vertex.
+
+```python
+
+DijkstraShortestPath(startV) {
+   for each vertex currentV in graph {
+      currentV->distance = Infinity
+      currentV->predV = 0
+      Push currentV to unvisitedQueue
+   }
+
+   // startV has a distance of 0 from itself
+   startV->distance = 0
+
+   while (unvisitedQueue is not empty) {
+      // Visit vertex with minimum distance from startV
+      currentV = PopMin unvisitedQueue
+
+      for each vertex adjV adjacent to currentV {
+         edgeWeight = weight of edge from currentV to adjV
+         alternativePathDistance = currentV->distance + edgeWeight
+
+         // If shorter path from startV to adjV is found,
+         // update adjV's distance and predecessor
+         if (alternativePathDistance < adjV->distance) {
+            adjV->distance = alternativePathDistance
+            adjV->predV = currentV
+         }
+      }
+   }
+}
+```
+
+**Finding shortest path from start vertex to destination vertex**
+
+After running Dijkstra's algorithm, the shortest path from the start vertex to a destination vertex can be determined using the vertices' predecessor pointers. If the destination vertex's predecessor pointer is not 0, the shortest path is traversed in reverse by following the predecessor pointers until the start vertex is reached. If the destination vertex's predecessor pointer is 0, then a path from the start vertex to the destination vertex does not exist.
+
+**Algorithm efficiency**
+
+If the unvisited vertex queue is implemented using a list, the runtime for Dijkstra's shortest path algorithm is O(V2). The outer loop executes V times to visit all vertices. In each outer loop execution, popping the vertex from the queue requires searching all vertices in the list, which has a runtime of O(V). For each vertex, the algorithm follows the subset of edges to adjacent vertices; following a total of E edges across all loop executions. Given E < V2, the runtime is O(V*V + E) = O(V2 + E) = O(V2). Implementing the queue using a fast heap data structure reduces the runtime to O(E + V log V).
+
+**Negative edge weights**
+
+Dijkstra's shortest path algorithm can be used for unweighted graphs (using a uniform edge weight of 1) and weighted graphs with non-negative edges weights. For a directed graph with negative edge weights, Dijkstra's algorithm may not find the shortest path for some vertices, so the algorithm should not be used if a negative edge weight exists.
