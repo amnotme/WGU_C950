@@ -247,3 +247,11 @@ In a directed graph:
 
 - A ***path*** is a sequence of directed edges leading from a source (starting) vertex to a destination (ending) vertex.
 - A ***cycle*** is path that starts and ends at the same vertex. A directed graph is ***cyclic*** if the graph contains a cycle, and ***acyclic*** if the graph does not contain a cycle.
+
+### Cycles in directed graphs: Kidney transplants
+
+A patient needing a kidney transplant may have a family member willing to donate a kidney but is incompatible. That family member is willing to donate a kidney to someone else, as long as their family member also receives a kidney donation. Suppose Gregory needs a kidney. Gregory's wife, Eleanor, is willing to donate a kidney but is not compatible with Gregory. However, Eleanor is compatible with another patient Joanna, and Joanna's husband Darrell is compatible with Gregory. So, Eleanor donates a kidney to Joanna, and Darrell donates a kidney to Gregory, which is an example of a 2-way kidney transplant. In 2015, a 9-way kidney transplant involving 18 patients was performed within 36 hours (Source: [SF Gate](http://www.sfgate.com/health/article/9-way-kidney-swap-involving-18-surgeries-at-2-6307975.php)). Multiple-patient kidney transplants can be represented as cycles within a directed graph.
+
+![https://zytools.zybooks.com/zyAuthor/DataStructures/46/IMAGES/embedded_image_1_cd899718-f11d-49cb-a55b-5fab6177ba01_uvarMp7wYIBBdZ54B4kq.png](https://zytools.zybooks.com/zyAuthor/DataStructures/46/IMAGES/embedded_image_1_cd899718-f11d-49cb-a55b-5fab6177ba01_uvarMp7wYIBBdZ54B4kq.png)
+
+In this graph, vertices represent patients, and edges represent compatibility between a patient's family member (shown in parentheses) and another patient. An N-way kidney transplant is represented as a cycle with N edges. Due the complexity of coordinating multiple simultaneous surgeries, hospitals and doctors typically try to find the shortest possible cycle.
