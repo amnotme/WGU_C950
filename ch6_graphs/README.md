@@ -323,3 +323,68 @@ If the unvisited vertex queue is implemented using a list, the runtime for Dijks
 **Negative edge weights**
 
 Dijkstra's shortest path algorithm can be used for unweighted graphs (using a uniform edge weight of 1) and weighted graphs with non-negative edges weights. For a directed graph with negative edge weights, Dijkstra's algorithm may not find the shortest path for some vertices, so the algorithm should not be used if a negative edge weight exists.
+
+
+# 6.12 Python: Dijkstra's shortest path
+
+**Dijkstra's shortest path**
+
+Dijkstra's algorithm computes the shortest path from a given starting vertex to all other vertices in the graph.
+
+To perform Dijjkstra's algorithm, the Graph and Vertex classes are used. The Vertex class is extended to include two additional data members:
+
+- distance - The total sum of the edge weights on a path from some start vertex to the vertex.
+- pred_vertex - A reference to the vertex that occurs immediately before the vertex, on a path from some start vertex to the vertex.
+
+
+### Dijkstra's shortest path algorithm.
+
+```python
+def dijkstra_shortest_path(g, start_vertex):
+    # Put all vertices in an unvisited queue.
+    unvisited_queue = []
+    for current_vertex in g.adjacency_list:
+        unvisited_queue.append(current_vertex)
+
+    # start_vertex has a distance of 0 from itself
+    start_vertex.distance = 0
+
+    # One vertex is removed with each iteration; repeat until the list is
+    # empty.
+    while len(unvisited_queue) > 0:
+
+        # Visit vertex with minimum distance from start_vertex
+        smallest_index = 0
+        for i in range(1, len(unvisited_queue)):
+            if unvisited_queue[i].distance < unvisited_queue[smallest_index].distance:
+                smallest_index = i
+        current_vertex = unvisited_queue.pop(smallest_index)
+
+        # Check potential path lengths from the current vertex to all neighbors.
+        for adj_vertex in g.adjacency_list[current_vertex]:
+            edge_weight = g.edge_weights[(current_vertex, adj_vertex)]
+            alternative_path_distance = current_vertex.distance + edge_weight
+
+            # If shorter path from start_vertex to adj_vertex is found,
+            # update adj_vertex's distance and predecessor
+            if alternative_path_distance < adj_vertex.distance:
+                adj_vertex.distance = alternative_path_distance
+                adj_vertex.pred_vertex = current_vertex
+```
+
+After calling the dijkstra_shortest_path() function, the shortest path from the starting vertex to any other given vertex can be built by following the pred_vertex *backwards*
+from the destination vertex to the starting vertex.
+
+### Getting the shortest path and distance between two vertices
+
+```python
+def get_shortest_path(start_vertex, end_vertex):
+    # Start from end_vertex and build the path backwards.
+    path = ''
+    current_vertex = end_vertex
+    while current_vertex is not start_vertex:
+        path = ' -> ' + str(current_vertex.label) + path
+        current_vertex = current_vertex.pred_vertex
+    path = start_vertex.label + path
+    return path
+```
