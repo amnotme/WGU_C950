@@ -24,7 +24,9 @@ Complete two main tasks for this lab:
 
 The prison is laid out in a rectangular grid with some number of rows and columns. Corridors exist between all adjacent rooms. The prisoner's cell is always in the North-West corner of the prison, and the exit is always in the South-East corner. The following diagram shows a sample prison with 3 rows and 4 columns, with two rooms that have cameras.
 
-ASSET 1
+
+![Prison Break 3x4 - Grid](https://user-images.githubusercontent.com/19755860/233874444-9c3073f9-7e0e-4630-9799-a3d88d22a3ba.png)
+
 
 The prison shown above is defined in a text file. The first line contains two integers separated by a space: the number of rows followed by the number of columns. Each subsequent line contains the row and column number of the cells that contain cameras. The file that represents the above prison is:
 
@@ -59,7 +61,7 @@ Note that the Vertex class has been extended to include two special-purpose data
 
 The prisoner wants to know how many exit paths exist. Note that the actual paths are not listed, only the total count is displayed. Exit paths must avoid all rooms that contain cameras. In the example 3x4 prison above, 4 distinct exit paths exist:
 
-ASSET 2
+![Prison Break 3x4 - Paths](https://user-images.githubusercontent.com/19755860/233874496-3c9eab69-905b-4fd6-a4f7-efd149f5ec3d.png)
 
 The red, blue, green and purple lines show the 4 distinct paths the prisoner could take to get to the exit, while avoiding the cameras.
 
