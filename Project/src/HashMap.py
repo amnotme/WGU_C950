@@ -1,5 +1,7 @@
 from typing import Any, List, Optional
-
+from constants import (
+    AT_HUB_TEXT
+)
 
 class HashMap:
 
@@ -132,7 +134,7 @@ class HashMap:
         """
         for row in self.table:
             for package in row:
-                package.status = "AT HUB"
+                package.status = AT_HUB_TEXT
 
     def print_package(self, key) -> None:
         """

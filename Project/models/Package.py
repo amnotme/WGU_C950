@@ -1,5 +1,6 @@
-from typing import Any
+from typing import Any, Union
 from dataclasses import dataclass
+import datetime
 
 @dataclass
 class Package:
@@ -19,12 +20,14 @@ class Package:
         notes: Any additional notes about the package.
     """
 
-    package_id: str
+    package_id: int
     address: str
     city: str
     state: str
-    zipcode: str
-    delivery_time: str
-    weight: str
+    zipcode: int
+    delivery_time: datetime
+    weight: float
     status: str
     notes: str
+
+

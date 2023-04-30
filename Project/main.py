@@ -1,18 +1,30 @@
 from src.parser import Parser
-
-DISTANCES_ROWS_START = 0
-DISTANCES_ROWS_END = 28
-
-DISTANCES_COLUMNS_START = 0
-DISTANCES_COLUMNS_END = 27
-
-
-parser = Parser('data/WGUPS Distance Table.xlsx')
-
-cells = parser.get_cells(
-        'distances'
-    )
+from typing import List, Union
+from models.truck import Truck
+from models.hub import Hub
+from models.package import (
+    Package
+)
+from src.data_loader import Loader
+from constants import (
+    DISTANCES_DATA_FILE,
+    PACKAGES_DATA_FILE
+)
 
 
-for cell in cells.itertuples():
-    print(cell)
+
+hubs_parser: Parser = Parser(file_path=DISTANCES_DATA_FILE)
+hubs: List[Hub] = Loader.load_hubs(hubs_parser=hubs_parser)
+
+
+for hub in hubs:
+    print(hub)
+
+
+packages_parser: Parser = Parser(file_path=PACKAGES_DATA_FILE)
+packages: List[Package] = Loader.load_packages(packages_parser=packages_parser)
+
+
+for package in packages:
+    print(package)
+
