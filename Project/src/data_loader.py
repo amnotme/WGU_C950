@@ -5,15 +5,46 @@ from pandas import DataFrame
 from typing import List, Union, Any
 from constants import (
     DISTANCES_DATA_SHEET,
+    DISTANCES_ROWS_START,
+    DISTANCES_ROWS_END,
+    DISTANCES_COLUMNS_START,
+    DISTANCES_COLUMNS_END,
     HUBS_ROWS_START,
     HUBS_ROWS_END,
     HUBS_COLUMNS_START,
     HUBS_COLUMNS_END,
     AT_HUB_TEXT
 )
+from src.graph import Graph
+
 
 class Loader:
 
+    @staticmethod
+    def load_graph_distances(graph: Graph, distances_parser: Parser, hubs: List[Hub]) -> Graph:
+        distances_dataframes: DataFrame = distances_parser.get_range_of_cells(
+            DISTANCES_DATA_SHEET,
+            start_row=DISTANCES_ROWS_START,
+            end_row=DISTANCES_ROWS_END,
+            start_col=DISTANCES_COLUMNS_START,
+            end_col=DISTANCES_COLUMNS_END,
+            filler=''
+        )
+
+        df_row_index: int = 0
+        for df_row in distances_dataframes.itertuples():
+            for df_column_index in range(1, df_row_index + 2):
+                graph.add_edge(node1=hubs[df_row_index], node2=hubs[df_column_index -1], distance=df_row[df_column_index])
+            df_row_index += 1
+        return graph
+
+
+    @staticmethod
+    def load_graph_hubs(graph: Graph, hubs: List[Hub]) -> Graph:
+        for hub in hubs:
+            graph.add_node(hub)
+
+        return graph
 
     @staticmethod
     def load_hubs(hubs_parser: Parser) -> List[Hub]:

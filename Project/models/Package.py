@@ -29,5 +29,3 @@ class Package:
     weight: float
     status: str
     notes: str
-
-

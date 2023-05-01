@@ -1,4 +1,4 @@
-from typing import Any, List, Optional
+from typing import Any, List, Optional, Union
 from constants import (
     AT_HUB_TEXT
 )
@@ -27,7 +27,7 @@ class HashMap:
         self.size: int = size
         self.table: List[List[Any]] = [[] for _ in range(self.size)]
 
-    def add(self, key: Any, value: Any) -> bool:
+    def add(self, key: Union[object, Any], value: Any, object_key: Optional[str] = None) -> bool:
         """Adds a key-value pair to the hash map.
 
         Args:
@@ -37,7 +37,10 @@ class HashMap:
         Returns:
             True if the key-value pair was added successfully, False otherwise.
         """
-        hash_code = hash(key) % self.size
+        if object_key:
+            hash_code = hash(key.__getattribute__(object_key)) % self.size
+        else:
+            hash_code = hash(key) % self.size
         bucket = self.table[hash_code]
         for i, kvp in enumerate(bucket):
             if kvp[0] == key:
@@ -46,7 +49,7 @@ class HashMap:
         bucket.append((key, value))
         return True
 
-    def get(self, key: Any) -> Optional[Any]:
+    def get(self, key: Any, object_key: Optional[str] = None) -> Optional[Any]:
         """Gets the value associated with a key in the hash map.
 
         Args:
@@ -55,7 +58,11 @@ class HashMap:
         Returns:
             The value associated with the key, or None if the key is not present in the hash map.
         """
-        hash_code = hash(key) % self.size
+
+        if object_key:
+            hash_code = hash(key.__getattribute__(object_key)) % self.size
+        else:
+            hash_code = hash(key) % self.size
         bucket = self.table[hash_code]
         for kvp in bucket:
             if kvp[0] == key:

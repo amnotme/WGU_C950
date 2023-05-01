@@ -76,7 +76,7 @@ class Parser:
         if cell_index == 1:
             if cell.strip() == HUB_TEXT:
                 return WGU_ADDRESS
-            return (cell.strip().split("\n"))[0]
+            return ((cell.strip().split("\n"))[0]).strip()
         elif cell_index == 2:
             if cell.strip() == HUB_TEXT:
                 return WGU_ZIPCODE
