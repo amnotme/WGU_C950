@@ -116,14 +116,12 @@ class HashMap:
         self.table = [[] for _ in range(self.size)]
 
 
-
     def print(self) -> None:
         """Displays all packages in the hash table to the console,
            grouped by hash table bucket.
         Returns:
             None
         """
-        print('-------Hash Table-------')
         for package in self.table:
             print(str(package))
 

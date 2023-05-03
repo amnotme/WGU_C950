@@ -11,6 +11,8 @@ from constants import (
     DISTANCES_DATA_FILE,
     PACKAGES_DATA_FILE
 )
+from utils.visualizer import visualize_graph
+
 
 graph = Graph()
 
@@ -36,18 +38,3 @@ graph
 #     print(f"node {node} shortest_path: {shortest_path}")
 
 # visualize_graph(graph=graph)
-# from graphviz import Digraph
-#
-# def visualize_graph(graph):
-#     dot = Digraph()
-#
-#     # Add nodes
-#     for node in graph.adjacency_list:
-#         dot.node(str(node))
-#
-#     # Add edges
-#     for node1 in graph.adjacency_list:
-#         for node2, distance in graph.adjacency_list[node1]:
-#             dot.edge(str(node1), str(node2), label=str(distance))
-#
-#     dot.render('graph', view=True)

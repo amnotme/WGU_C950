@@ -67,7 +67,7 @@ class Parser:
     def validate_delivery_time(self, cell) -> datetime:
 
         if isinstance(cell, str) and cell == EOD_TEXT:
-            return datetime.time(17, 0)
+            return datetime.time(20, 0)
         else:
             return cell
 
