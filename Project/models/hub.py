@@ -1,8 +1,7 @@
-from typing import Any, Union
-from dataclasses import dataclass
+from typing import Any
 import datetime
+import math
 
-# @dataclass(unsafe_hash=True)
 class Hub:
 
     def __init__(self, hub_name, address, zipcode):
@@ -10,19 +9,12 @@ class Hub:
         self.address = address
         self.zipcode = zipcode
         self.previous_hub: [Any] = None
-        self.distance = float("inf")
+        self.distance = math.inf
 
     def __repr__(self):
-        """
-        Returns a formatted string showing the street address of the location.
+        """Representation of hub"""
+        return f"{self.address}"
 
-        :return: a formatted string showing the street address of the location
-        :rtype: str
-        """
-        return "{}".format(self.address)
-
-    # hub_name: str
-    # address: str
-    # zipcode: int
-    # previous_hub: Any = None
-    # distance: float = float("inf")
+    def __lt__(self, other):
+        """Less than monkey patch to compare distances."""
+        return self.distance < other.distance

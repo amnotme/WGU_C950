@@ -34,7 +34,7 @@ class Loader:
         df_row_index: int = 0
         for df_row in distances_dataframes.itertuples():
             for df_column_index in range(1, df_row_index + 2):
-                graph.add_edge(node1=hubs[df_row_index], node2=hubs[df_column_index -1], distance=df_row[df_column_index])
+                graph.add_edge(hub1=hubs[df_row_index], hub2=hubs[df_column_index -1], distance=df_row[df_column_index])
             df_row_index += 1
         return graph
 
