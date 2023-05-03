@@ -1,14 +1,9 @@
-import pandas as pd
 import datetime
-
-from pandas import DataFrame
 from typing import Union
-from constants import (
-    HUB_TEXT,
-    WGU_ADDRESS,
-    WGU_ZIPCODE,
-    EOD_TEXT
-)
+
+import pandas as pd
+from constants import EOD_TEXT, HUB_TEXT, WGU_ADDRESS, WGU_ZIPCODE
+from pandas import DataFrame
 
 
 class Parser:

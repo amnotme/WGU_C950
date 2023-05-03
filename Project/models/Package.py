@@ -1,11 +1,11 @@
-from typing import Any, Union
-from dataclasses import dataclass
 import datetime
+from dataclasses import dataclass
+
 
 @dataclass
 class Package:
 
-    """A class to create a package object that then gets
+    """A dataclass to create a package object that then gets
     stored into a hash table and truck object.
 
     Attributes:

@@ -1,21 +1,16 @@
+from typing import Any, List, Union
+
+from constants import (AT_HUB_TEXT, DISTANCES_COLUMNS_END,
+                       DISTANCES_COLUMNS_START, DISTANCES_DATA_SHEET,
+                       DISTANCES_ROWS_END, DISTANCES_ROWS_START,
+                       HUBS_COLUMNS_END, HUBS_COLUMNS_START, HUBS_ROWS_END,
+                       HUBS_ROWS_START)
+from pandas import DataFrame
+
 from models.hub import Hub
 from models.package import Package
-from src.parser import Parser
-from pandas import DataFrame
-from typing import List, Union, Any
-from constants import (
-    DISTANCES_DATA_SHEET,
-    DISTANCES_ROWS_START,
-    DISTANCES_ROWS_END,
-    DISTANCES_COLUMNS_START,
-    DISTANCES_COLUMNS_END,
-    HUBS_ROWS_START,
-    HUBS_ROWS_END,
-    HUBS_COLUMNS_START,
-    HUBS_COLUMNS_END,
-    AT_HUB_TEXT
-)
 from src.graph import Graph
+from src.parser import Parser
 
 
 class Loader:

@@ -1,6 +1,8 @@
 import math
+from typing import Dict, List, Tuple
+
 from models.hub import Hub
-from typing import List, Dict, Tuple
+
 
 class Graph:
     """

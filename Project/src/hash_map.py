@@ -1,7 +1,7 @@
 from typing import Any, List, Optional, Union
-from constants import (
-    AT_HUB_TEXT
-)
+
+from constants import AT_HUB_TEXT
+
 
 class HashMap:
 

@@ -1,5 +1,6 @@
 from graphviz import Digraph
 
+
 def visualize_graph(graph):
     dot = Digraph()
 

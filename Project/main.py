@@ -1,18 +1,14 @@
-from src.parser import Parser
-from src.graph import (Graph)
 from typing import List, Union
-from models.truck import Truck
-from models.hub import Hub
-from models.package import (
-    Package
-)
-from src.data_loader import Loader
-from constants import (
-    DISTANCES_DATA_FILE,
-    PACKAGES_DATA_FILE
-)
-from utils.visualizer import visualize_graph
 
+from constants import DISTANCES_DATA_FILE, PACKAGES_DATA_FILE
+
+from models.hub import Hub
+from models.package import Package
+from models.truck import Truck
+from src.data_loader import Loader
+from src.graph import Graph
+from src.parser import Parser
+from utils.visualizer import visualize_graph
 
 graph = Graph()
 
