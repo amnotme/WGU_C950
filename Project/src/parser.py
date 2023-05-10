@@ -7,18 +7,32 @@ from pandas import DataFrame
 
 
 class Parser:
+    """
+    A class for parsing data from an Excel file.
+    """
 
     def __init__(self, file_path: str) -> None:
+        """
+        Initializes a new Parser object.
+
+        Args:
+            file_path: The path to the Excel file to parse.
+        """
         self.file_path = file_path
 
-    def get_cells(self, sheet_name: str, filler: Union[str, int] = -1) -> DataFrame:
+    def get_cells(
+        self,
+        sheet_name: str,
+        filler: Union[str, int] = -1
+    ) -> DataFrame:
         """
         Get cells from an Excel file.
 
         Args:
             sheet_name (str): The name of the sheet to read.
-            filler Union(str, int): when encountering an nan in a Pandas dataframe cell we can fill it with this
-                if provided. Default input is -1
+            filler Union(str, int): when encountering an nan in a
+                Pandas dataframe cell we can fill it with this if provided.
+                Default input is -1
         Returns:
             A Pandas DataFrame containing the cells from the specified range.
         """
@@ -31,20 +45,21 @@ class Parser:
         return df
 
     def get_range_of_cells(
-            self,
-            sheet_name: str,
-            start_row: int,
-            end_row: int,
-            start_col: int,
-            end_col: int,
-            filler: Union[str, int] = -1,
+        self,
+        sheet_name: str,
+        start_row: int,
+        end_row: int,
+        start_col: int,
+        end_col: int,
+        filler: Union[str, int] = -1,
     ) -> DataFrame:
         """
         Get cells from an Excel file.
 
         Args:
             sheet_name (str): The name of the sheet to read.
-            filler Union(str, int): when encountering an nan in a Pandas dataframe cell we can fill it with this
+            filler Union(str, int): when encountering an nan in a
+                Pandas dataframe cell we can fill it with this
                 if provided. Default input is -1
         Returns:
             A Pandas DataFrame containing the cells from the specified range.
@@ -59,15 +74,40 @@ class Parser:
         # Return the specified range of cells.
         return df.iloc[start_row:end_row, start_col:end_col]
 
-    def validate_delivery_time(self, cell) -> datetime:
+    def validate_delivery_time(
+        self,
+        cell: DataFrame
+    ) -> datetime:
+        """
+        Validates the delivery time.
+
+        Args:
+            cell: The delivery time.
+
+        Returns:
+            The validated delivery time.
+        """
 
         if isinstance(cell, str) and cell == EOD_TEXT:
             return datetime.time(20, 0)
         else:
             return cell
 
-    def sanitize_hub_names(self, cell, cell_index: int) -> Union[str, int]:
+    def sanitize_hub_names(
+        self,
+        cell: DataFrame,
+        cell_index: int
+    ) -> Union[str, int]:
+        """
+        Sanitizes the hub name.
 
+        Args:
+            cell (DataFrame): cell containing hub information.
+            cell_index: The index of the cell.
+
+        Returns:
+            The sanitized cell.
+        """
         if cell_index == 1:
             if cell.strip() == HUB_TEXT:
                 return WGU_ADDRESS
@@ -76,4 +116,3 @@ class Parser:
             if cell.strip() == HUB_TEXT:
                 return WGU_ZIPCODE
             return int(((cell.strip().split("\n"))[1])[1:6])
-

@@ -12,7 +12,8 @@ HUBS_ROWS_END: int = 27
 HUBS_COLUMNS_START: int = 0
 HUBS_COLUMNS_END: int = 2
 
-# Distances constants. Row and column numbers to access distance data in Distances.xlsx
+# Distances constants. Row and column numbers
+# to access distance data in Distances.xlsx
 
 DISTANCES_ROWS_START: int = 0
 DISTANCES_ROWS_END: int = 27

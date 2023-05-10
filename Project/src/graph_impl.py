@@ -2,7 +2,7 @@ import math
 from typing import Dict, List, Tuple
 
 from models.hub import Hub
-
+from src.hash_map import HashMap
 
 class Graph:
     """
@@ -22,13 +22,14 @@ class Graph:
         Initialize the Graph with empty adjacency list
         and distance dictionary.
         """
-        self.adjacency_list: Dict[Hub, List[Hub]] = {}
-        self.distance: Dict[Tuple[Hub, Hub], float] = {}
+
+        self.adjacency_list: HashMap = HashMap(26)
+        self.distance: HashMap = HashMap()
 
     def add_node(self, hub: Hub) -> None:
         """Add a new node (Hub) to the graph."""
-        if hub not in self.adjacency_list:
-            self.adjacency_list[hub]: List[Hub] = []
+        if not self.adjacency_list.contains(hub):
+            self.adjacency_list.add(key=hub, value=[])
 
     def add_edge(self, hub1: Hub, hub2: Hub, distance: float) -> None:
         """
@@ -59,8 +60,8 @@ class Graph:
             distance (float): The distance between the two locations.
         """
         if (
-            not self.adjacency_list[start_hub] or
-            end_hub not in self.adjacency_list
+            not self.adjacency_list.contains(start_hub) or
+            not self.adjacency_list.contains(end_hub)
         ):
             return math.inf
         else:
@@ -73,9 +74,10 @@ class Graph:
         """Private method to help initialize the unvisited queue list with hubs (Hub) from the adjacency list."""
 
         queue: List[Hub] = []
-        for hub in self.adjacency_list:
-            hub.distance = math.inf
-            hub.previous_hub = None
+        all_hubs = self.adjacency_list.get_all_elements()
+        for hub in all_hubs:
+            hub[0].distance = math.inf
+            hub[0].previous_hub = None
             queue.append(hub)
 
         return queue
@@ -91,7 +93,7 @@ class Graph:
         """
         smallest_distance_index: int = 0
         for i in range(1, unvisited_queue.__len__()):
-            if unvisited_queue[i].distance < unvisited_queue[smallest_distance_index].distance:
+            if unvisited_queue[i][0].distance < unvisited_queue[smallest_distance_index][0].distance:
                 smallest_distance_index = i
 
         return unvisited_queue.pop(smallest_distance_index)
@@ -105,8 +107,8 @@ class Graph:
             hub2 (Hub): The second hub.
             distance (float): The distance between the two hubs.
         """
-        self.distance[(hub1, hub2)]: float = distance
-        self.distance[(hub2, hub1)]: float = distance
+        self.distance.add((hub1, hub2), distance)
+        self.distance.add((hub2, hub1), distance)
 
 
     def dijkstra_shortest_path(self, start_hub: Hub) -> None:
@@ -121,19 +123,21 @@ class Graph:
         unvisited_queue: List[Hub] = self._initialize_hubs()
 
         # Distance to starting hub is zero
-        start_hub.distance = 0.0
+        iterable_start_hub = start_hub[0]
+        iterable_start_hub.distance = 0.0
 
         # Visit each hub in the graph, then remove it from the unvisited queue
         while unvisited_queue:
             # Visit the hub with the smallest distance
             current_hub: Hub = self._get_hub_with_smallest_distance(unvisited_queue=unvisited_queue)
             # Check the distance to each neighbor hub
-            for neighbor_hub in self.adjacency_list.get(current_hub):
-                distance_between_hubs: float = self.distance.get((current_hub, neighbor_hub))
-                new_shortest_distance: float = current_hub.distance + distance_between_hubs
+            iterable_current_hub = current_hub[0]
+            for neighbor_hub in self.adjacency_list.get(iterable_current_hub):
+                distance_between_hubs: float = self.distance.get((iterable_current_hub, neighbor_hub))
+                new_shortest_distance: float = iterable_current_hub.distance + distance_between_hubs
 
                 # Update distance with new shortest distance and previous hub if a shorter path is found
                 if new_shortest_distance < neighbor_hub.distance:
-                    self._update_hub_distance(hub1=start_hub, hub2=neighbor_hub, distance=new_shortest_distance)
+                    self._update_hub_distance(hub1=iterable_start_hub, hub2=neighbor_hub, distance=new_shortest_distance)
                     neighbor_hub.distance = new_shortest_distance
-                    neighbor_hub.previous_hub = current_hub
+                    neighbor_hub.previous_hub = iterable_current_hub

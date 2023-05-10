@@ -148,3 +148,16 @@ class HashMap:
         :type key: int
         """
         print(self.get(key))
+
+    def get_all_elements(self) -> List[Any]:
+        flat_list: List[Any] = []
+        for element in self.table:
+            if type(element) is list:
+                # If the element is of type list, iterate through the sublist
+                for item in element:
+                    if len(item) > 0:
+                        flat_list.append(item)
+            else:
+                flat_list.append(element)
+
+        return flat_list
