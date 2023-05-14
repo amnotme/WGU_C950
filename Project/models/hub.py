@@ -1,6 +1,7 @@
 import math
+from dataclasses import dataclass, field
 
-
+@dataclass(unsafe_hash=True)
 class Hub:
     """
     Model class for a hub.  A hub is a location / node.
@@ -17,20 +18,11 @@ class Hub:
         previous_hub: The previous hub in the shortest path from the start hub.
         distance: The distance from the start hub to this hub.
     """
-    def __init__(self, hub_name: str, address: str, zipcode: int):
-        """
-        Initializes a new Hub object.
-
-        Args:
-            hub_name (str): The name of the hub.
-            address (str): The address of the hub.
-            zipcode (int): The zipcode of the hub.
-        """
-        self.hub_name: str = hub_name
-        self.address: str = address
-        self.zipcode: int = zipcode
-        self.previous_hub: "Hub" = None
-        self.distance: float = math.inf
+    hub_name: str
+    address: str
+    zipcode: int
+    previous_hub: "Hub" = field(default_factory=lambda: None)
+    distance: float = field(default_factory=lambda: math.inf)
 
     def __repr__(self):
         """

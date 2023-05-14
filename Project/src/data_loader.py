@@ -1,23 +1,19 @@
 from typing import List
-from constants import (
-    AT_HUB_TEXT,
-    DISTANCES_COLUMNS_END,
-    DISTANCES_COLUMNS_START,
-    DISTANCES_DATA_SHEET,
-    DISTANCES_ROWS_END,
-    DISTANCES_ROWS_START,
-    HUBS_COLUMNS_END,
-    HUBS_COLUMNS_START,
-    HUBS_ROWS_END,
-    HUBS_ROWS_START,
-)
+
+from constants import (AT_HUB_TEXT, DISTANCES_COLUMNS_END,
+                       DISTANCES_COLUMNS_START, DISTANCES_DATA_SHEET,
+                       DISTANCES_ROWS_END, DISTANCES_ROWS_START,
+                       HUBS_COLUMNS_END, HUBS_COLUMNS_START, HUBS_ROWS_END,
+                       HUBS_ROWS_START)
 from pandas import DataFrame
 
 from models.hub import Hub
 from models.package import Package
 from src.graph import Graph
-from src.parser import Parser
+from src.hash_map import HashMap
 from src.graph_impl import Graph as graph_two
+from src.parser import Parser
+
 
 class Loader:
     """
@@ -26,9 +22,9 @@ class Loader:
 
     @staticmethod
     def load_graph_distances(
-            graph: Graph,
-            distances_parser: Parser,
-            hubs: List[Hub]
+        graph: Graph,
+        distances_parser: Parser,
+        hubs: List[Hub]
     ) -> Graph:
         """
         Loads the distances between hubs from a spreadsheet into a graph.
@@ -56,7 +52,7 @@ class Loader:
             for df_column_index in range(1, df_row_index + 2):
                 graph.add_edge(
                     hub1=hubs[df_row_index],
-                    hub2=hubs[df_column_index -1],
+                    hub2=hubs[df_column_index - 1],
                     distance=df_row[df_column_index]
                 )
             df_row_index += 1
@@ -146,7 +142,11 @@ class Loader:
                     city=package.city,
                     state=package.state,
                     zipcode=package.zip,
-                    delivery_time=packages_parser.validate_delivery_time(package.deadline),
+                    delivery_time=(
+                        packages_parser.validate_delivery_time(
+                            package.deadline
+                        )
+                    ),
                     weight=package.mass,
                     status=AT_HUB_TEXT,
                     notes=package.notes

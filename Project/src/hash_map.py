@@ -12,7 +12,8 @@ class HashMap:
 
     Attributes:
         size: The size of the hash map.
-        table: A list of lists, where each inner list represents a bucket in the hash map.
+        table: A list of lists, where each inner list represents
+        a bucket in the hash map.
 
     Methods:
         add: Adds a key-value pair to the hash map.
@@ -27,7 +28,12 @@ class HashMap:
         self.size: int = size
         self.table: List[List[Any]] = [[] for _ in range(self.size)]
 
-    def add(self, key: Union[object, Any], value: Any, object_key: Optional[str] = None) -> bool:
+    def add(
+        self,
+        key: Union[object, Any],
+        value: Any,
+        object_key: Optional[str] = None
+    ) -> bool:
         """Adds a key-value pair to the hash map.
 
         Args:
@@ -56,7 +62,8 @@ class HashMap:
             key: The key to get the value for.
 
         Returns:
-            The value associated with the key, or None if the key is not present in the hash map.
+            The value associated with the key, or None
+            if the key is not present in the hash map.
         """
 
         if object_key:
@@ -76,7 +83,8 @@ class HashMap:
             key: The key to remove.
 
         Returns:
-            True if the key-value pair was removed successfully, False otherwise.
+            True if the key-value pair was removed successfully,
+            False otherwise.
         """
         hash_code = hash(key) % self.size
         bucket = self.table[hash_code]
@@ -114,7 +122,6 @@ class HashMap:
         """Clears the hash map.
         """
         self.table = [[] for _ in range(self.size)]
-
 
     def print(self) -> None:
         """Displays all packages in the hash table to the console,
