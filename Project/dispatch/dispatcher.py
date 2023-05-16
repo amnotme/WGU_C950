@@ -1,4 +1,5 @@
 from typing import List, Union, Any
+from datetime import datetime, time
 
 from constants import (
     DISTANCES_DATA_FILE,
@@ -7,6 +8,10 @@ from constants import (
     MAX_NUMBER_OF_PACKAGES_TO_DELIVER,
     MAX_TRUCK_CAPACITY,
     AT_HUB_TEXT,
+    TRUCK_ONE_PACKAGES,
+    TRUCK_TWO_PACKAGES,
+    TRUCK_THREE_PACKAGES,
+    DELIVERY_DATE
 )
 
 from models.hub import Hub
@@ -68,9 +73,122 @@ class Dispatcher:
                 Truck(truck_id=truck_id)
             )
 
+    def load_truck_with_packages(self, truck_id: int) -> None:
+
+        truck_to_load: Truck
+        packages_to_load: List[int]
+
+        if truck_id == 1:
+            packages_to_load = TRUCK_ONE_PACKAGES
+        if truck_id == 2:
+            packages_to_load = TRUCK_TWO_PACKAGES
+        if truck_id == 3:
+            packages_to_load = TRUCK_THREE_PACKAGES
+
+
+        for truck in self.trucks:
+            if truck.truck_id == truck_id:
+                truck_to_load = truck
+                break
+
+        if isinstance(truck_to_load, Truck):
+            for package_number in packages_to_load:
+                package: Package = self.indexed_packages.get(key=package_number)
+                truck_to_load.load_truck(package=package)
+
+
+    def begin_delivery(self, truck, begin_time=time(8, 0), end_time=time(17, 0)):
+        """
+        Simulates a truck route delivering the loaded packages.  Returns the earlier of: time the route
+        completes or the specified end_time.
+
+        The truck starts at the hub location, then drives to each address to deliver packages, in order
+        by the delivery deadline.  Uses a greedy algorithm to determine the next nearest address. The
+        truck returns to the hub when all packages have been delivered.
+
+        :param truck: the truck to drive the route
+        :type truck: Truck
+        :param begin_time: optional time to begin route
+        :type begin_time: datetime.datetime
+        :param end_time: optional time to end the route (default: EOD)
+        :type end_time: datetime.datetime
+        :return: earlier of: the time the route completes, or the optional specified end_time
+        :rtype: datetime.datetime
+        """
+
+        # Check if there are any packages to deliver.
+        if len(truck.packages) == 0:
+            return begin_time
+
+        # Sort the packages by delivery deadline.
+        packages = sorted(truck.packages, key=lambda package: package.delivery_time)
+
+        # Initialize the current location and time.
+        start_loc: Hub = next(iter(self.graph.adjacency_list))
+        current_location: Hub = start_loc
+        current_time: time = begin_time
+
+        # Initialize the remaining time.
+        remaining_time = self.time_difference(
+            start_time=begin_time,
+            end_time=end_time
+        )
+
+        # Initialize the list of visited locations.
+        visited_locations: List[Hub] = []
+
+        # While there are still packages to deliver and there is still time remaining:
+        while len(packages) > 0 and remaining_time > 0:
+            # Find the next package to deliver.
+            package = packages.pop(0)
+
+            next_hub: Hub = self.graph.get_hub_by_address(hub_address=package.address)
+            # Calculate the distance to the next package.
+            # TODO we could probably sort by all packages distances to get the one with the smallest distances
+            distance = self.graph.distance[(current_location, next_hub)]
+
+            # If there is enough time remaining to deliver the next package:
+            seconds_to_drive_to_next_hub: float = distance / truck.speed
+            if remaining_time >= seconds_to_drive_to_next_hub:
+                # Drive to the next package.
+                truck.update_miles_driven(miles_traveled=distance)
+
+                current_time, elapsed_time = truck.update_truck_clock(
+                    distance_traveled=distance,
+                    current_clock=current_time
+                )
+
+                remaining_time -= elapsed_time
+                # Deliver the next package.
+                truck.deliver_package(package=package)
+
+                # Update the current location and time.
+                current_location = next_hub
+                # current_time = current_time + datetime.timedelta(seconds=distance / 18 * 60)
+
+                # Add the current location to the list of visited locations.
+                visited_locations.append(current_location)
+
+            # Otherwise, return the current time.
+            else:
+                return current_time
+
+        # Return the time when the route is completed.
+        return current_time
+
+
+    def time_difference(self, start_time: time, end_time: time):
+        start_date: datetime = datetime.combine(DELIVERY_DATE, start_time)
+        end_date: datetime = datetime.combine(DELIVERY_DATE, end_time)
+
+        return ((end_date - start_date).seconds)
+
+
+
     def _add_shortest_paths_to_graph(self):
         for hub in self.graph.adjacency_list:
             self.graph.dijkstra_shortest_path(start_hub=hub)
+
 
     # def _add_shortest_paths_to_graph(self):
     #     all_elements = self.graph.adjacency_list.get_all_elements()
@@ -79,6 +197,7 @@ class Dispatcher:
 
     def _graph_visualize(self):
         visualize_graph(self.graph)
+
 
     def clear_out_trucks(self):
         for truck in self.trucks:

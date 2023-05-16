@@ -89,7 +89,7 @@ class Parser:
         """
 
         if isinstance(cell, str) and cell == EOD_TEXT:
-            return datetime.time(20, 0)
+            return datetime.time(17, 0)
         else:
             return cell
 

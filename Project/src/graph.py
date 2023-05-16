@@ -1,5 +1,5 @@
 import math
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Optional
 
 from models.hub import Hub
 
@@ -44,6 +44,13 @@ class Graph:
             self.adjacency_list.get(hub2).append(hub1)
 
             self._update_hub_distance(hub1=hub1, hub2=hub2, distance=distance)
+
+    def get_hub_by_address(self, hub_address: str) -> Optional[Hub]:
+
+        for hub in self.adjacency_list:
+            if hub.address == hub_address:
+                return hub
+        return None
 
     def get_distance(self, start_hub: Hub, end_hub: Hub) -> float:
         """
@@ -98,7 +105,8 @@ class Graph:
         for i in range(1, unvisited_queue.__len__()):
             if (
                 unvisited_queue[i].distance <
-                unvisited_queue[smallest_distance_index].distance
+                unvisited_queue[smallest_distance_index].distance and
+                unvisited_queue[i] != unvisited_queue[smallest_distance_index]
             ):
                 smallest_distance_index = i
 

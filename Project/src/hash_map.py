@@ -140,14 +140,6 @@ class HashMap:
             for package in row:
                 print(package)
 
-    def reset_packages(self) -> None:
-        """
-        Resets status for all packages to "AT HUB".
-        """
-        for row in self.table:
-            for package in row:
-                package.status = AT_HUB_TEXT
-
     def print_package(self, key) -> None:
         """
         Displays one selected package to the console.

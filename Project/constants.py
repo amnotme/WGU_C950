@@ -1,3 +1,5 @@
+from typing import List
+from datetime import date, datetime
 
 DISTANCES_DATA_FILE: str = 'data/Distances.xlsx'
 DISTANCES_DATA_SHEET: str = 'distances'
@@ -32,7 +34,12 @@ AT_HUB_TEXT: str = "AT HUB"
 
 # Truck / Dispatch constatns
 MAX_TRUCK_SPEED_PER_HOUR: float = 18.0 # mph
-MAX_TRUCK_DISTANCE_PER_MINUTE: float = MAX_TRUCK_SPEED_PER_HOUR / 60.0 # mpm
+MAX_TRUCK_DISTANCE_PER_SECOND: float = MAX_TRUCK_SPEED_PER_HOUR / 3600.0 # mps
 MAX_NUMBER_OF_TRUCKS_TO_DISPATCH: int = 3
 MAX_NUMBER_OF_PACKAGES_TO_DELIVER: int = 40
-MAX_TRUCK_CAPACITY = 16
+MAX_TRUCK_CAPACITY: int = 16
+
+TRUCK_ONE_PACKAGES: List[int] = [1, 7, 8, 13, 14, 15, 16, 19, 20, 29, 30, 34, 37, 39, 40]
+TRUCK_TWO_PACKAGES: List[int] = [2, 3, 9, 12, 17, 18, 25, 27, 28, 32, 33, 35, 36, 38]
+TRUCK_THREE_PACKAGES: List[int] = [4, 5, 6, 10, 11, 21, 22, 23, 24, 26, 31]
+DELIVERY_DATE: date = date.today()
