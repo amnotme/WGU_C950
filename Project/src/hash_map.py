@@ -123,22 +123,13 @@ class HashMap:
         """
         self.table = [[] for _ in range(self.size)]
 
-    def print(self) -> None:
-        """Displays all packages in the hash table to the console,
-           grouped by hash table bucket.
-        Returns:
-            None
-        """
-        for package in self.table:
-            print(str(package))
-
-    def print_all_packages(self) -> None:
+    def display_package_status(self) -> None:
         """
         Displays all packages to the console, one package per line.
         """
-        for row in self.table:
-            for package in row:
-                print(package)
+        all_packages = self.get_all_elements()
+        for package in all_packages:
+            print(package)
 
     def print_package(self, key) -> None:
         """

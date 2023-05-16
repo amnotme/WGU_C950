@@ -52,6 +52,8 @@ class Truck:
             self.packages.append(package)
             self.capacity -= 1
             self.truck_clock = starting_time
+            self.speed = MAX_TRUCK_DISTANCE_PER_SECOND
+            self.status = f"En route via truck no. [{self.truck_id}]"
 
 
     def update_miles_driven(self, miles_traveled: float):
@@ -89,8 +91,11 @@ class Truck:
 
 
     def deliver_package(self, package: Package):
-        package.status = f'Package delivered at {self.truck_clock.time()}'
-        self.packages.remove(package)
+        if package not in self.packages:
+            print(package)
+        else:
+            package.status = f'Package delivered at {self.truck_clock.time()} from truck no. [{self.truck_id}]'
+            self.packages.remove(package)
 
 
 

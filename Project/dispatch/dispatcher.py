@@ -115,14 +115,19 @@ class Dispatcher:
         :return: earlier of: the time the route completes, or the optional specified end_time
         :rtype: datetime.datetime
         """
-
+        truck.status = "Out on deliveries"
         # Check if there are any packages to deliver.
         if len(truck.packages) == 0:
             return begin_time
 
         # Sort the packages by delivery deadline.
-        packages = sorted(truck.packages, key=lambda package: package.delivery_time)
+        truck.packages = sorted(truck.packages, key=lambda package: package.delivery_time)
 
+        hubs_to_deliver: List[Hub] = [
+            self.graph.get_hub_by_address(
+                hub_address=package.address
+            ) for package in truck.packages
+        ]
         # Initialize the current location and time.
         start_loc: Hub = next(iter(self.graph.adjacency_list))
         current_location: Hub = start_loc
@@ -138,14 +143,17 @@ class Dispatcher:
         visited_locations: List[Hub] = []
 
         # While there are still packages to deliver and there is still time remaining:
-        while len(packages) > 0 and remaining_time > 0:
+        while len(hubs_to_deliver) > 0 and remaining_time > 0:
             # Find the next package to deliver.
-            package = packages.pop(0)
+            # package = packages.pop(0)
 
-            next_hub: Hub = self.graph.get_hub_by_address(hub_address=package.address)
+            # next_hub: Hub = self.graph.get_hub_by_address(hub_address=package.address)
             # Calculate the distance to the next package.
             # TODO we could probably sort by all packages distances to get the one with the smallest distances
-            distance = self.graph.distance[(current_location, next_hub)]
+            next_hub, distance = self.next_nearest_hub(
+                current_hub=current_location,
+                unvisited_queue=hubs_to_deliver
+            )
 
             # If there is enough time remaining to deliver the next package:
             seconds_to_drive_to_next_hub: float = distance / truck.speed
@@ -159,8 +167,15 @@ class Dispatcher:
                 )
 
                 remaining_time -= elapsed_time
+
                 # Deliver the next package.
-                truck.deliver_package(package=package)
+                for package in truck.packages:
+                    temp_hub: Hub = self.graph.get_hub_by_address(
+                        hub_address=package.address
+                    )
+                    if temp_hub.address == next_hub.address:
+                        truck.deliver_package(package=package)
+
 
                 # Update the current location and time.
                 current_location = next_hub
@@ -171,9 +186,11 @@ class Dispatcher:
 
             # Otherwise, return the current time.
             else:
+                truck.status = AT_HUB_TEXT
                 return current_time
 
         # Return the time when the route is completed.
+        truck.status = AT_HUB_TEXT
         return current_time
 
 
@@ -183,6 +200,30 @@ class Dispatcher:
 
         return ((end_date - start_date).seconds)
 
+    def next_nearest_hub(self, current_hub: Hub, unvisited_queue: List[Hub]):
+        smallest_distance_index: int = 0
+        initial_shortest_distance: float = self.graph.distance.get(
+            (current_hub, unvisited_queue[smallest_distance_index])
+        )
+        for i in range(1, unvisited_queue.__len__()):
+            next_shortest_distance: float = self.graph.distance.get(
+                (current_hub, unvisited_queue[i])
+            )
+            if (
+                next_shortest_distance is not None and
+                next_shortest_distance < initial_shortest_distance
+            ):
+                initial_shortest_distance = next_shortest_distance
+                smallest_distance_index = i
+
+        distance_to_travel: float = self.graph.distance.get(
+                (current_hub, unvisited_queue[smallest_distance_index])
+            )
+        if distance_to_travel is None:
+            # We are at the last delivery stop so we will deliver it here.
+            return unvisited_queue.pop(smallest_distance_index), 0
+        else:
+            return unvisited_queue.pop(smallest_distance_index), distance_to_travel
 
 
     def _add_shortest_paths_to_graph(self):
@@ -209,3 +250,19 @@ class Dispatcher:
 
     def clear_package_warehouse(self):
         self.indexed_packages.clear()
+
+    def end_delivery_report(self):
+
+        total_distance: float = 0.0
+        truck_times: List[datetime] = []
+        self.indexed_packages.display_package_status()
+        for truck in self.trucks:
+            truck_times.append(truck.truck_clock)
+            print(f"Status: [{truck.status}]. Truck {truck.truck_id} traveled: {round(truck.miles, 2)} miles.")
+            total_distance += round(truck.miles, 2)
+
+        print(f"Total distance traveled: {round(total_distance, 2)} miles.")
+        print(f"All packages have been delivered as of {max(truck_times)}")
+
+
+
