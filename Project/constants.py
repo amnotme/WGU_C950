@@ -1,5 +1,5 @@
 from typing import List
-from datetime import date, datetime
+from datetime import date, time
 
 DISTANCES_DATA_FILE: str = 'data/Distances.xlsx'
 DISTANCES_DATA_SHEET: str = 'distances'
@@ -32,7 +32,7 @@ WGU_ZIPCODE: int = 84107
 # Hashmap constants
 AT_HUB_TEXT: str = "AT HUB"
 
-# Truck / Dispatch constatns
+# Truck / Dispatch constants
 MAX_TRUCK_SPEED_PER_HOUR: float = 18.0 # mph
 MAX_TRUCK_DISTANCE_PER_SECOND: float = MAX_TRUCK_SPEED_PER_HOUR / 3600.0 # mps
 MAX_NUMBER_OF_TRUCKS_TO_DISPATCH: int = 3
@@ -40,6 +40,27 @@ MAX_NUMBER_OF_PACKAGES_TO_DELIVER: int = 40
 MAX_TRUCK_CAPACITY: int = 16
 
 TRUCK_ONE_PACKAGES: List[int] = [1, 7, 8, 13, 14, 15, 16, 19, 20, 29, 30, 34, 37, 39, 40]
-TRUCK_TWO_PACKAGES: List[int] = [2, 3, 9, 12, 17, 18, 25, 27, 28, 32, 33, 35, 36, 38]
-TRUCK_THREE_PACKAGES: List[int] = [4, 5, 6, 10, 11, 21, 22, 23, 24, 26, 31]
+TRUCK_TWO_PACKAGES: List[int] = [2, 3, 9, 12, 17, 18, 27, 33, 35, 36, 38]
+TRUCK_THREE_PACKAGES: List[int] = [4, 5, 6, 10, 11, 21, 22, 23, 24, 25, 28, 32, 26, 31]
 DELIVERY_DATE: date = date.today()
+
+DELAYED_START_TIME: time = time(hour=9, minute=5)  # 9:05 am
+
+
+# Business rules constants
+BR_TIME_FOR_NEW_ADDRESS_FOR_PACKAGE_NINE: time = time(hour=10, minute=20) # 10:20 am
+
+BR_ONLY_IN_TRUCK_TWO: str = "Can only be on truck 2"
+BR_WRONG_ADDRESS: str = "Wrong address listed"
+BR_RIGHT_ADDRESS: str = "410 S State St"
+
+BR_DELAYED_UNTIL_NINE_FIVE: str = "Delayed on flight---will not arrive to depot until 9:05 am"
+BR_MUST_BE_DELIVERED_WITH_ONE: str = "Must be delivered with 13, 15"
+BR_MUST_BE_DELIVERED_WITH_TWO: str = "Must be delivered with 13, 19"
+BR_MUST_BE_DELIVERED_WITH_THREE: str = "Must be delivered with 15, 19"
+
+BR_MUST_BE_DELIVERED: List[str] = [
+    BR_MUST_BE_DELIVERED_WITH_ONE,
+    BR_MUST_BE_DELIVERED_WITH_TWO,
+    BR_MUST_BE_DELIVERED_WITH_THREE
+]

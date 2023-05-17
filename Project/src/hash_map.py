@@ -1,7 +1,5 @@
 from typing import Any, List, Optional, Union
 
-from constants import AT_HUB_TEXT
-
 
 class HashMap:
 
@@ -111,7 +109,8 @@ class HashMap:
         return False
 
     def size(self) -> int:
-        """Gets the size of the hash map.
+        """
+        Gets the size of the hash map.
 
         Returns:
             The size of the hash map.
@@ -119,7 +118,8 @@ class HashMap:
         return self.size
 
     def clear(self) -> None:
-        """Clears the hash map.
+        """
+        Clears the hash map.
         """
         self.table = [[] for _ in range(self.size)]
 
@@ -134,12 +134,23 @@ class HashMap:
     def print_package(self, key) -> None:
         """
         Displays one selected package to the console.
-        :param key: the package ID of the package to display
-        :type key: int
+        Args:
+            key (mix): key associated with package.
+        Returns:
+            None
         """
         print(self.get(key))
 
     def get_all_elements(self) -> List[Any]:
+        """Flattens a two-dimensional array into a single array with all
+            elements. This is a good way to iterate through our HashMap
+        Args:
+            None
+
+        Returns:
+            List (Any): A flattened list with all current elements
+            in the HashMap.
+        """
         flat_list: List[Any] = []
         for element in self.table:
             if type(element) is list:
@@ -149,5 +160,4 @@ class HashMap:
                         flat_list.append(item)
             else:
                 flat_list.append(element)
-
         return flat_list

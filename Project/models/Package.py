@@ -37,4 +37,4 @@ class Package:
         return f"Package ID: {self.package_id}, " \
                f"Delivery address: {self.address}, " \
                f"Deliver by: {self.delivery_time}, " \
-               f"Status: {self.status}."
+               f"Status: {self.status}"

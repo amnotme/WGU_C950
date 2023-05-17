@@ -90,11 +90,12 @@ class Truck:
         return (new_truck_time.time(), delta_time.seconds)
 
 
-    def deliver_package(self, package: Package):
+    def deliver_package(self, package: Package, packages_delivered: List[Package]):
         if package not in self.packages:
             print(package)
         else:
             package.status = f'Package delivered at {self.truck_clock.time()} from truck no. [{self.truck_id}]'
+            packages_delivered.append(package)
             self.packages.remove(package)
 
 
