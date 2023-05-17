@@ -64,3 +64,17 @@ BR_MUST_BE_DELIVERED: List[str] = [
     BR_MUST_BE_DELIVERED_WITH_TWO,
     BR_MUST_BE_DELIVERED_WITH_THREE
 ]
+
+# Main Menu Constants
+
+MM_ONE_DISPLAY_OVERALL_SUMMARY: str = "[1] Display report at end-of-day"
+MM_TWO_DISPLAY_SPECIFIC_TIME_SUMMARY: str = "[2] Display summary report for a given time"
+MM_THREE_DISPLAY_PACKAGE_STATUS: str = "[3] Display status for a given package"
+MM_EXIT_PROGRAM: str = "[Q] Exit dispatch tracking"
+
+MM_USER_MENU: List[str] = [
+    MM_ONE_DISPLAY_OVERALL_SUMMARY,
+    MM_TWO_DISPLAY_SPECIFIC_TIME_SUMMARY,
+    MM_THREE_DISPLAY_PACKAGE_STATUS,
+    MM_EXIT_PROGRAM
+]

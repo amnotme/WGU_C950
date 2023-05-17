@@ -1,6 +1,63 @@
 from dispatch.dispatcher import Dispatcher
 from datetime import time
-from constants import DELAYED_START_TIME
+from constants import DELAYED_START_TIME, MM_USER_MENU
+
+
+class MainMenu:
+
+    finished: bool
+    dispatcher: Dispatcher
+
+    def __init__(self):
+        self.finished = False
+        self.dispatcher = Dispatcher()
+
+    def _option_selection(self) -> str:
+        print("Please make a selection from the menu:")
+        for selection in MM_USER_MENU:
+            print(selection)
+        selection: str = input("Enter 1-3 or Q to exit")
+        return selection
+
+
+    def _option_one(self):
+        print("Running full end of day report:")
+        self.dispatcher.load_truck_with_packages(truck_id=1)
+        self.dispatcher.load_truck_with_packages(truck_id=2)
+
+        driver_one_time: time = self.dispatcher.begin_delivery(
+            truck=self.dispatcher.trucks[0]
+        )
+        driver_two_time: time = self.dispatcher.begin_delivery(
+            truck=self.dispatcher.trucks[1]
+        )
+
+        if driver_two_time > driver_one_time:
+            self.dispatcher.load_truck_with_packages(truck_id=3)
+            self.dispatcher.begin_delivery(
+                truck=self.dispatcher.trucks[2],
+                begin_time=max(driver_one_time, DELAYED_START_TIME)
+            )
+        else:
+            self.dispatcher.load_truck_with_packages(truck_id=3)
+            self.dispatcher.begin_delivery(
+                truck=self.dispatcher.trucks[2],
+                begin_time=max(driver_two_time, DELAYED_START_TIME)
+            )
+
+        self.dispatcher.end_delivery_report()
+
+    def interface(self):
+
+        while not self.finished:
+            selection = self._option_selection()
+
+            if selection == '1':
+                self._option_one()
+            if selection == 'Q':
+                print("Exiting dispatch tracking")
+                self.finished = True
+
 
 if __name__ == "__main__":
     """
@@ -29,26 +86,8 @@ if __name__ == "__main__":
     finishing their original route first, will return to pick up a second
     truck with loaded items and will, no earlier than 9:05 am, start delivering them.
     """
-    dispatcher: Dispatcher = Dispatcher()
+    menu: MainMenu = MainMenu()
 
-    dispatcher.load_truck_with_packages(truck_id=1)
-    dispatcher.load_truck_with_packages(truck_id=2)
+    menu.interface()
 
-    driver_one_time: time = dispatcher.begin_delivery(dispatcher.trucks[0])
-    driver_two_time: time = dispatcher.begin_delivery(dispatcher.trucks[1])
-
-    if driver_two_time > driver_one_time:
-        dispatcher.load_truck_with_packages(truck_id=3)
-        dispatcher.begin_delivery(
-            truck=dispatcher.trucks[2],
-            begin_time=max(driver_one_time, DELAYED_START_TIME)
-        )
-    else:
-        dispatcher.load_truck_with_packages(truck_id=3)
-        dispatcher.begin_delivery(
-            truck=dispatcher.trucks[2],
-            begin_time=max(driver_two_time, DELAYED_START_TIME)
-        )
-
-    dispatcher.end_delivery_report()
 
