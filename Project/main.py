@@ -1,3 +1,10 @@
+"""
+Leopoldo Hernandez Oliva
+WGU Student ID: 002520248
+
+2023-05
+"""
+
 from datetime import datetime, time
 from typing import Optional
 
@@ -8,6 +15,7 @@ from constants import (
     DEFAULT_MAXIMUM_NUMBER_OF_PACKAGES
 )
 from dispatch.dispatcher import Dispatcher
+from utils.color_printer import ColorPrinter as cp
 
 
 class MainMenu:
@@ -17,6 +25,7 @@ class MainMenu:
     def __init__(self):
         self.finished = False
         self.dispatcher = None
+        self.printer = cp()
 
     def _option_selection(self) -> str:
         """
@@ -27,16 +36,18 @@ class MainMenu:
 
         """
         self.dispatcher = Dispatcher()
-        print("\n--------------------------------------")
-        print("Please make a selection from the menu:")
-        print("--------------------------------------")
+        self.printer.print_color(text="\n--------------------------------------", color_code=cp.CYAN)
+        self.printer.print_color(text="Please make a selection from the menu:", color_code=cp.CYAN)
+        self.printer.print_color(text="--------------------------------------", color_code=cp.CYAN)
 
         # Display the menu options
+
         for selection in MM_USER_MENU:
-            print(selection)
+            self.printer.print_color(text=selection, color_code=cp.GREEN)
 
         # Prompt the user for a selection
-        selection: str = (input("Enter 1-3 or Q to exit: \n")).lower()
+        self.printer.print_color(text="Enter 1-3 or Q to exit: ", color_code=cp.UNDERLINE)
+        selection: str = (input()).lower()
         return selection
 
     def _option_one(self):
@@ -44,14 +55,23 @@ class MainMenu:
         Executes option one: running a full end-of-day report.
 
         """
+        # Start color printing
+        self.printer.print_color(text="", color_code=cp.GREEN, terminate_color=False)
+
         self._start_dispatcher()
         self.dispatcher.end_delivery_report()
+
+        # Reset printer
+        self.printer.reset_color()
 
     def _option_two(self):
         """
         Executes option two: running a timed report for a specific time.
 
         """
+        # Start color printing
+        self.printer.print_color(text="", color_code=cp.BLUE, terminate_color=False)
+
         parsed_time: Optional[time] = None
 
         print("Please enter a time between 08:00 - 17:00 to get a detailed schedule of \n"
@@ -63,11 +83,17 @@ class MainMenu:
         self._start_dispatcher(new_delivery_stop_time=parsed_time)
         self.dispatcher.end_delivery_report(end_time=parsed_time)
 
+        # Reset printer
+        self.printer.reset_color()
+
     def _option_three(self):
         """
         Executes option three: running a package schedule report for a specific time and package.
 
         """
+
+        # Start color printing
+        self.printer.print_color(text="", color_code=cp.PURPLE, terminate_color=False)
         parsed_time: Optional[time] = None
         package_number: Optional[int] = None
 
@@ -85,6 +111,9 @@ class MainMenu:
 
         self._start_dispatcher(new_delivery_stop_time=parsed_time)
         self.dispatcher.indexed_packages.print_package(package_number)
+
+        # Reset printer
+        self.printer.reset_color()
 
     def _start_dispatcher(
             self,
@@ -225,10 +254,10 @@ class MainMenu:
                 print("Running single package report:\n")
                 self._option_three()
             elif selection == 'q':
-                print("Exiting dispatch tracking")
+                self.printer.print_color(text="Exiting dispatch tracking", color_code=cp.BOLD)
                 self.finished = True
             else:
-                print("That selection is invalid")
+                self.printer.print_color(text="That selection is invalid", color_code=cp.RED)
 
 
 if __name__ == "__main__":
