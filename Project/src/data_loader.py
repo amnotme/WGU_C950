@@ -1,17 +1,17 @@
 from typing import List
 
-from constants import (AT_HUB_TEXT, DISTANCES_COLUMNS_END,
-                       DISTANCES_COLUMNS_START, DISTANCES_DATA_SHEET,
-                       DISTANCES_ROWS_END, DISTANCES_ROWS_START,
-                       HUBS_COLUMNS_END, HUBS_COLUMNS_START, HUBS_ROWS_END,
-                       HUBS_ROWS_START)
+from constants import (
+    AT_HUB_TEXT, DISTANCES_COLUMNS_END,
+    DISTANCES_COLUMNS_START, DISTANCES_DATA_SHEET,
+    DISTANCES_ROWS_END, DISTANCES_ROWS_START,
+    HUBS_COLUMNS_END, HUBS_COLUMNS_START, HUBS_ROWS_END,
+    HUBS_ROWS_START
+)
 from pandas import DataFrame
 
 from models.hub import Hub
 from models.package import Package
 from src.graph import Graph
-from src.hash_map import HashMap
-from src.graph_impl import Graph as graph_two
 from src.parser import Parser
 
 
@@ -22,9 +22,9 @@ class Loader:
 
     @staticmethod
     def load_graph_distances(
-        graph: Graph,
-        distances_parser: Parser,
-        hubs: List[Hub]
+            graph: Graph,
+            distances_parser: Parser,
+            hubs: List[Hub]
     ) -> Graph:
         """
         Loads the distances between hubs from a spreadsheet into a graph.

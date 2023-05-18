@@ -21,9 +21,9 @@ class Parser:
         self.file_path = file_path
 
     def get_cells(
-        self,
-        sheet_name: str,
-        filler: Union[str, int] = -1
+            self,
+            sheet_name: str,
+            filler: Union[str, int] = -1
     ) -> DataFrame:
         """
         Get cells from an Excel file.
@@ -45,13 +45,13 @@ class Parser:
         return df
 
     def get_range_of_cells(
-        self,
-        sheet_name: str,
-        start_row: int,
-        end_row: int,
-        start_col: int,
-        end_col: int,
-        filler: Union[str, int] = -1,
+            self,
+            sheet_name: str,
+            start_row: int,
+            end_row: int,
+            start_col: int,
+            end_col: int,
+            filler: Union[str, int] = -1,
     ) -> DataFrame:
         """
         Get cells from an Excel file.
@@ -75,8 +75,8 @@ class Parser:
         return df.iloc[start_row:end_row, start_col:end_col]
 
     def validate_delivery_time(
-        self,
-        cell: DataFrame
+            self,
+            cell: DataFrame
     ) -> datetime:
         """
         Validates the delivery time.
@@ -94,9 +94,9 @@ class Parser:
             return cell
 
     def sanitize_hub_names(
-        self,
-        cell: DataFrame,
-        cell_index: int
+            self,
+            cell: DataFrame,
+            cell_index: int
     ) -> Union[str, int]:
         """
         Sanitizes the hub name.

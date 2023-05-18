@@ -1,26 +1,20 @@
-from typing import List, Tuple
 from datetime import datetime, time, timedelta
+from typing import List, Optional, Tuple
 
 from constants import (
-    DISTANCES_DATA_FILE,
-    PACKAGES_DATA_FILE,
-    MAX_NUMBER_OF_TRUCKS_TO_DISPATCH,
-    MAX_TRUCK_CAPACITY,
-    AT_HUB_TEXT,
-    TRUCK_ONE_PACKAGES,
-    TRUCK_TWO_PACKAGES,
-    TRUCK_THREE_PACKAGES,
-    DELIVERY_DATE,
-    BR_WRONG_ADDRESS,
-    BR_ONLY_IN_TRUCK_TWO,
-    BR_DELAYED_UNTIL_NINE_FIVE,
-    BR_MUST_BE_DELIVERED_WITH_ONE,
-    BR_MUST_BE_DELIVERED_WITH_TWO,
+    AT_HUB_TEXT, BR_DELAYED_UNTIL_NINE_FIVE,
+    BR_MUST_BE_DELIVERED, BR_MUST_BE_DELIVERED_WITH_ONE,
     BR_MUST_BE_DELIVERED_WITH_THREE,
-    BR_MUST_BE_DELIVERED,
-    DELAYED_START_TIME,
+    BR_MUST_BE_DELIVERED_WITH_TWO, BR_ONLY_IN_TRUCK_TWO,
+    BR_RIGHT_ADDRESS,
     BR_TIME_FOR_NEW_ADDRESS_FOR_PACKAGE_NINE,
-    BR_RIGHT_ADDRESS
+    BR_WRONG_ADDRESS, DEFAULT_DELIVERY_END_TIME,
+    DEFAULT_DELIVERY_START_TIME,
+    DEFAULT_MAXIMUM_NUMBER_OF_PACKAGES, DELAYED_START_TIME,
+    DELIVERY_DATE, DISTANCES_DATA_FILE,
+    MAX_NUMBER_OF_TRUCKS_TO_DISPATCH, MAX_TRUCK_CAPACITY,
+    PACKAGES_DATA_FILE, TRUCK_ONE_PACKAGES,
+    TRUCK_THREE_PACKAGES, TRUCK_TWO_PACKAGES
 )
 
 from models.hub import Hub
@@ -28,8 +22,8 @@ from models.package import Package
 from models.truck import Truck
 from src.data_loader import Loader
 from src.graph import Graph
-from src.parser import Parser
 from src.hash_map import HashMap
+from src.parser import Parser
 from utils.visualizer import visualize_graph
 
 
@@ -57,7 +51,7 @@ class Dispatcher:
         self.hubs = self._parse_hubs()
         self.indexed_packages = self._parse_packages()
         self.graph = self._load_graph()
-        self.prep_trucks_for_dispatch()
+        self.trucks = self.prep_trucks_for_dispatch()
         self.business_rules = self._provide_logistical_rules_to_dispatch()
 
     def _parse_hubs(self):
@@ -101,7 +95,9 @@ class Dispatcher:
         packages: List[Package] = Loader.load_packages(packages_parser=packages_parser)
 
         # Initialize a hash map to index the packages
-        indexed_packages: HashMap = HashMap(size=40)
+        indexed_packages: HashMap = HashMap(
+            size=DEFAULT_MAXIMUM_NUMBER_OF_PACKAGES
+        )
 
         # Index each package using its package ID
         for package in packages:
@@ -141,15 +137,29 @@ class Dispatcher:
         )
 
     def _provide_logistical_rules_to_dispatch(self) -> HashMap:
-        business_rules = HashMap(40)
+        """
+        Provides logistical rules to dispatch based on package notes.
+
+        Returns:
+            HashMap: A HashMap object containing package IDs as keys and associated notes as values.
+        """
+        # Initialize a HashMap to store the business rules
+        business_rules = HashMap(
+            DEFAULT_MAXIMUM_NUMBER_OF_PACKAGES
+        )
+
+        # Iterate over all packages in the indexed_packages
         for package in self.indexed_packages.get_all_elements():
+            # Add package ID as key and associated notes as value to the business_rules HashMap
             business_rules.add(key=package[1].package_id, value=package[1].notes)
+
+        # Return the populated business_rules HashMap
         return business_rules
 
     def prep_trucks_for_dispatch(
-        self,
-        trucks_to_dispatch: int = MAX_NUMBER_OF_TRUCKS_TO_DISPATCH
-    ) -> None:
+            self,
+            trucks_to_dispatch: int = MAX_NUMBER_OF_TRUCKS_TO_DISPATCH
+    ) -> List[Truck]:
         """
         Prepares trucks for dispatch.
 
@@ -161,14 +171,15 @@ class Dispatcher:
             trucks_to_dispatch: The number of trucks to prepare for dispatch (default: MAX_NUMBER_OF_TRUCKS_TO_DISPATCH).
 
         Returns:
-            None.
+            List of Truck objects.
         """
-
+        trucks: List[Truck] = []
         for truck_id in range(1, trucks_to_dispatch + 1):
             # Create a new truck object with the specified truck ID
-            self.trucks.append(
+            trucks.append(
                 Truck(truck_id=truck_id)
             )
+        return trucks
 
     def load_truck_with_packages(self, truck_id: int) -> None:
         """
@@ -185,8 +196,8 @@ class Dispatcher:
             None.
         """
 
-        truck_to_load: Truck
-        packages_to_load: List[int]
+        truck_to_load: Optional[Truck] = None
+        packages_to_load: List[int] = []
 
         # Determine the packages to load based on the truck ID
         if truck_id == 1:
@@ -206,9 +217,15 @@ class Dispatcher:
         if isinstance(truck_to_load, Truck):
             for package_number in packages_to_load:
                 package: Package = self.indexed_packages.get(key=package_number)
+                package.status = f"En route for delivery on truck no. {truck_to_load.truck_id}"
                 truck_to_load.load_truck(package=package)
 
-    def begin_delivery(self, truck, begin_time=time(8, 0), end_time=time(17, 0)):
+    def begin_delivery(
+            self,
+            truck: Truck,
+            begin_time=DEFAULT_DELIVERY_START_TIME,
+            end_time=DEFAULT_DELIVERY_END_TIME
+    ):
         """
         Begins the delivery process for a truck.
 
@@ -251,11 +268,10 @@ class Dispatcher:
         retry_hubs: List[Hub] = []
         packages_delivered: List[Package] = []
         # Initialize the remaining time
-        remaining_time = self.time_difference(
+        remaining_time = self.calculate_remaining_time(
             start_time=begin_time,
             end_time=end_time
         )
-
 
         # While there are still packages to deliver and there is still time remaining
         validation_passes: bool = True
@@ -277,10 +293,10 @@ class Dispatcher:
                     if (temp_hub.address == next_hub.address):
                         # Drive to the next package
                         if self._is_package_deliverable(
-                            package=package,
-                            truck=truck,
-                            packages_delivered=packages_delivered,
-                            time_to_get_to_destination=int(seconds_to_drive_to_next_hub)
+                                package=package,
+                                truck=truck,
+                                packages_delivered=packages_delivered,
+                                time_to_get_to_destination=int(seconds_to_drive_to_next_hub)
                         ):
                             truck.update_miles_driven(miles_traveled=distance)
                             current_time, elapsed_time = truck.update_truck_clock(
@@ -320,7 +336,7 @@ class Dispatcher:
         packages_delivered.clear()
         return current_time
 
-    def time_difference(self, start_time: time, end_time: time):
+    def calculate_remaining_time(self, start_time: time, end_time: time) -> float:
         """
         Calculates the time difference between two time values.
 
@@ -345,9 +361,9 @@ class Dispatcher:
         return time_diff.total_seconds()
 
     def next_nearest_hub(
-        self,
-        current_hub: Hub,
-        unvisited_queue: List[Hub]
+            self,
+            current_hub: Hub,
+            unvisited_queue: List[Hub]
     ) -> Tuple[Hub, float]:
         """
         Finds the next nearest hub.
@@ -380,8 +396,8 @@ class Dispatcher:
             if initial_shortest_distance is None:
                 print(initial_shortest_distance)
             if (
-                next_shortest_distance is not None and
-                next_shortest_distance < initial_shortest_distance
+                    next_shortest_distance is not None and
+                    next_shortest_distance < initial_shortest_distance
             ):
                 initial_shortest_distance = next_shortest_distance
                 smallest_distance_index = i
@@ -469,7 +485,7 @@ class Dispatcher:
         # Clear the indexed package dictionary
         self.indexed_packages.clear()
 
-    def end_delivery_report(self):
+    def end_delivery_report(self, end_time: Optional[time] = None):
         """
         Generates and displays the end of delivery report.
 
@@ -494,7 +510,10 @@ class Dispatcher:
         # Iterate over trucks
         for truck in self.trucks:
             # Track truck clock times
-            truck_times.append(truck.truck_clock)
+            if not isinstance(truck.truck_clock, datetime) and end_time is not None:
+                truck_times.append(datetime.combine(truck.truck_clock.today(), end_time))
+            else:
+                truck_times.append(truck.truck_clock)
 
             # Print truck status and traveled distance
             print(f"Status: [{truck.status}]. Truck {truck.truck_id} traveled: {round(truck.miles, 2)} miles.")
@@ -509,11 +528,11 @@ class Dispatcher:
         print(f"All packages have been delivered as of {max(truck_times)}")
 
     def _is_package_deliverable(
-        self,
-        package: Package,
-        truck: Truck,
-        packages_delivered: List[Package],
-        time_to_get_to_destination: int
+            self,
+            package: Package,
+            truck: Truck,
+            packages_delivered: List[Package],
+            time_to_get_to_destination: int
     ) -> bool:
         """
         Checks if a package is deliverable based on business rules.
@@ -555,10 +574,12 @@ class Dispatcher:
                 second=(time_to_get_to_destination % 60)
             )
             estimated_time_of_arrival: datetime = (
-                datetime.combine(date=DELIVERY_DATE, time=added_time_time_to_get_to_destination)
-                + timedelta(hours=truck.truck_clock.time().hour,
-                            minutes=truck.truck_clock.time().minute,
-                            seconds=truck.truck_clock.time().second)
+                    datetime.combine(date=DELIVERY_DATE, time=added_time_time_to_get_to_destination)
+                    + timedelta(
+                hours=truck.truck_clock.time().hour,
+                minutes=truck.truck_clock.time().minute,
+                seconds=truck.truck_clock.time().second
+            )
             )
             if estimated_time_of_arrival.time() >= BR_TIME_FOR_NEW_ADDRESS_FOR_PACKAGE_NINE:
                 package.address = BR_RIGHT_ADDRESS

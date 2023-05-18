@@ -1,5 +1,5 @@
 import math
-from typing import Dict, List, Tuple, Optional
+from typing import Dict, List, Optional, Tuple
 
 from models.hub import Hub
 
@@ -65,8 +65,8 @@ class Graph:
             distance (float): The distance between the two locations.
         """
         if (
-            not self.adjacency_list[start_hub] or
-            end_hub not in self.adjacency_list
+                not self.adjacency_list[start_hub] or
+                end_hub not in self.adjacency_list
         ):
             return math.inf
         else:
@@ -90,8 +90,8 @@ class Graph:
         return queue
 
     def _get_hub_with_smallest_distance(
-        self,
-        unvisited_queue: List[Hub]
+            self,
+            unvisited_queue: List[Hub]
     ) -> Hub:
         """
         Private method that returns the next hub with the smallest distance
@@ -104,9 +104,9 @@ class Graph:
         smallest_distance_index: int = 0
         for i in range(1, unvisited_queue.__len__()):
             if (
-                unvisited_queue[i].distance <
-                unvisited_queue[smallest_distance_index].distance and
-                unvisited_queue[i] != unvisited_queue[smallest_distance_index]
+                    unvisited_queue[i].distance <
+                    unvisited_queue[smallest_distance_index].distance and
+                    unvisited_queue[i] != unvisited_queue[smallest_distance_index]
             ):
                 smallest_distance_index = i
 
@@ -151,7 +151,7 @@ class Graph:
                     (current_hub, neighbor_hub)
                 )
                 new_shortest_distance: float = (
-                    current_hub.distance + distance_between_hubs
+                        current_hub.distance + distance_between_hubs
                 )
 
                 # Update distance with new shortest distance and previous hub

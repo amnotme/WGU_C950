@@ -2,7 +2,6 @@ from typing import Any, List, Optional, Union
 
 
 class HashMap:
-
     """A hash map for storing key-value pairs.
 
     Args:
@@ -27,10 +26,10 @@ class HashMap:
         self.table: List[List[Any]] = [[] for _ in range(self.size)]
 
     def add(
-        self,
-        key: Union[object, Any],
-        value: Any,
-        object_key: Optional[str] = None
+            self,
+            key: Union[object, Any],
+            value: Any,
+            object_key: Optional[str] = None
     ) -> bool:
         """Adds a key-value pair to the hash map.
 
