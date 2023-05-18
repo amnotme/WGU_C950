@@ -4,7 +4,8 @@ from typing import Optional
 from constants import (
     DEFAULT_DELIVERY_END_TIME,
     DELAYED_START_TIME,
-    MM_USER_MENU
+    MM_USER_MENU,
+    DEFAULT_MAXIMUM_NUMBER_OF_PACKAGES
 )
 from dispatch.dispatcher import Dispatcher
 
@@ -18,48 +19,96 @@ class MainMenu:
         self.dispatcher = None
 
     def _option_selection(self) -> str:
+        """
+        Displays the menu to the user and prompts for a menu selection.
 
+        Returns:
+            str: The user's menu selection.
+
+        """
         self.dispatcher = Dispatcher()
         print("\n--------------------------------------")
         print("Please make a selection from the menu:")
         print("--------------------------------------")
+
+        # Display the menu options
         for selection in MM_USER_MENU:
             print(selection)
+
+        # Prompt the user for a selection
         selection: str = (input("Enter 1-3 or Q to exit: \n")).lower()
         return selection
 
     def _option_one(self):
+        """
+        Executes option one: running a full end-of-day report.
 
+        """
         self._start_dispatcher()
         self.dispatcher.end_delivery_report()
 
     def _option_two(self):
+        """
+        Executes option two: running a timed report for a specific time.
 
-        print("Plesase enter a time between 08:00 - 17:00 to get a detailed scheduled of \n"
-              "all packages at that moment. Please use 24-hour format.")
+        """
         parsed_time: Optional[time] = None
+
+        print("Please enter a time between 08:00 - 17:00 to get a detailed schedule of \n"
+              "all packages at that moment. Please use 24-hour format.")
 
         while parsed_time is None:
             parsed_time = self._time_parser(input())
+
         self._start_dispatcher(new_delivery_stop_time=parsed_time)
         self.dispatcher.end_delivery_report(end_time=parsed_time)
 
     def _option_three(self):
-        pass
+        """
+        Executes option three: running a package schedule report for a specific time and package.
+
+        """
+        parsed_time: Optional[time] = None
+        package_number: Optional[int] = None
+
+        print("Please enter a time between 08:00 - 17:00 to get package schedule.\n"
+              "Please use 24-hour format.\n")
+
+        while parsed_time is None:
+            parsed_time = self._time_parser(input())
+
+        print(f"Please enter a package number you'd like to track. \n"
+              f"Choose between 1 and {DEFAULT_MAXIMUM_NUMBER_OF_PACKAGES}\n")
+
+        while package_number is None:
+            package_number = self._package_parser(input())
+
+        self._start_dispatcher(new_delivery_stop_time=parsed_time)
+        self.dispatcher.indexed_packages.print_package(package_number)
 
     def _start_dispatcher(
             self,
             new_delivery_stop_time: Optional[time] = None
     ):
+        """
+        Starts the dispatcher's operations by loading trucks with packages and beginning deliveries.
+
+        Args:
+            new_delivery_stop_time (Optional[time]): The new delivery stop time to use, if provided.
+
+        """
+        # Set the end time for deliveries based on the provided new_delivery_stop_time or use the default value
         end_time: time = (
             new_delivery_stop_time
             if new_delivery_stop_time
             else DEFAULT_DELIVERY_END_TIME
         )
 
+        # Load packages into trucks 1 and 2
         self.dispatcher.load_truck_with_packages(truck_id=1)
         self.dispatcher.load_truck_with_packages(truck_id=2)
 
+        # Begin delivery for truck 1 and truck 2
         driver_one_time: time = self.dispatcher.begin_delivery(
             truck=self.dispatcher.trucks[0], end_time=end_time
         )
@@ -67,13 +116,17 @@ class MainMenu:
             truck=self.dispatcher.trucks[1], end_time=end_time
         )
 
+        # Determine the start time based on the maximum time between driver_one_time, driver_two_time, and DELAYED_START_TIME
         start_time: time = max(driver_one_time, driver_two_time, DELAYED_START_TIME)
+
+        # Calculate the remaining time for deliveries
         time_remaining: float = self.dispatcher.calculate_remaining_time(
             start_time=start_time,
             end_time=end_time
         )
 
         if time_remaining > 0:
+            # Load packages into truck 3 if there is time remaining
             self.dispatcher.load_truck_with_packages(truck_id=3)
             self.dispatcher.begin_delivery(
                 truck=self.dispatcher.trucks[2],
@@ -86,6 +139,34 @@ class MainMenu:
                 self.dispatcher.trucks[2].truck_clock.today(),
                 end_time
             )
+
+    def _package_parser(self, package_id: str) -> Optional[int]:
+        """
+        Parses a package ID string and returns the corresponding package number.
+
+        Args:
+            package_id (str): The package ID to parse.
+
+        Returns:
+            Optional[int]: The package number if parsing is successful, or None if parsing fails.
+
+        """
+        package_number: Optional[int] = None
+
+        try:
+            # Attempt to convert the package ID to an integer
+            package_number = int(package_id)
+
+            # Check if the package number is within the valid range
+            if package_number > DEFAULT_MAXIMUM_NUMBER_OF_PACKAGES or package_number < 1:
+                print(f"That's not a valid package. \n"
+                      f"Please enter a package number between 1-{DEFAULT_MAXIMUM_NUMBER_OF_PACKAGES}")
+                package_number = None
+        except ValueError as e:
+            print(f"You entered {str(e)}. \n"
+                  f"Please enter a package number between 1-{DEFAULT_MAXIMUM_NUMBER_OF_PACKAGES}")
+
+        return package_number
 
     def _time_parser(self, time_to_parse: str) -> Optional[time]:
         """
@@ -121,16 +202,27 @@ class MainMenu:
         return parsed_time
 
     def interface(self):
+        """
+        Main interface for the dispatch tracking system.
 
+        Notes:
+            The function enters a loop until self.finished becomes True.
+            It prompts the user for an option selection and executes the corresponding action.
+
+        """
         while not self.finished:
+            # Prompt the user for an option selection
             selection = self._option_selection()
+
+            # Execute the corresponding action based on the selection
             if selection == '1':
-                print("Running full end of day report:")
+                print("Running full end of day report:\n")
                 self._option_one()
             elif selection == '2':
-                print("Running timed report:")
+                print("Running timed report:\n")
                 self._option_two()
             elif selection == '3':
+                print("Running single package report:\n")
                 self._option_three()
             elif selection == 'q':
                 print("Exiting dispatch tracking")

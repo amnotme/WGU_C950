@@ -525,7 +525,7 @@ class Dispatcher:
         print(f"Total distance traveled: {round(total_distance, 2)} miles.")
 
         # Print the latest truck time as the delivery completion time
-        print(f"All packages have been delivered as of {max(truck_times)}")
+        print(f"All delivery procedures have ended as of {max(truck_times)}")
 
     def _is_package_deliverable(
             self,
