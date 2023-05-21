@@ -6,48 +6,105 @@ The self-adjusting algorithm that will be used to create the program to deliver 
 B.
 Algorithm Overview:
 
-1. Dijkstra's shortest path algorithm starts by initializing all hubs as unvisited and sets their distances to infinity, except for the starting hub, which is set to 0. This is done using the initialize_hubs function.
-a. Time Complexity: O(N), where N is the number of hubs.
+1. Initialize a hash table to store packages with package ID as the key and package object as the value.
 
-2. The algorithm enters a loop that continues until all hubs have been visited. Each iteration selects the hub with the smallest distance using the get_hub_with_smallest_distance function.
-a. Time Complexity: O(N), as in the worst case, all hubs need to be visited.
+- hash_table = {}
+- Complexity: O(1) - Constant time complexity for hash table initialization.
 
-3. For the selected hub, the algorithm checks the distance to each of its neighbor hubs. This is done by iterating over the adjacency_list of the current hub.
-a. Time Complexity: O(E), where E is the number of edges in the graph.
 
-4. The algorithm calculates the new distance to each neighbor hub by adding the distance between the current hub and the neighbor hub to the current hub's distance. This is stored in the new_shortest_distance variable.
-a. Time Complexity: O(1), as it involves simple arithmetic operations.
+2. Read package data from a CSV file and create Package objects for each entry. Store each package object in the hash table.
 
-5. If the new distance is smaller than the neighbor hub's current distance, a shorter path has been found. The algorithm updates the distance of the neighbor hub with the new shortest distance and sets its previous hub as the current hub.
-a. Time Complexity: O(1), as it involves updating variables and dictionary entries.
+packages = read_csv("package_data.csv")
 
-6. After processing all the neighbors of the current hub, the algorithm moves on to the next iteration, selecting the hub with the next smallest distance.
-a. Time Complexity: O(N), as in the worst case, all hubs need to be visited.
+for package_data in packages:
+    package = create_package_object(package_data)
+    hash_table[package.package_id] = package
 
-7. Once all hubs have been visited, the shortest paths from the starting hub to all other hubs in the graph have been calculated.
+Complexity: O(n) - Linear time complexity, where n is the number of packages in the CSV file.
 
-8. The get_hub_with_smallest_distance function selects the hub with the smallest distance from the unvisited_queue. It iterates over the queue, comparing the distances of each hub and keeping track of the index with the smallest distance. The hub with the smallest distance is then removed from the queue and returned.
-a. Time Complexity: O(N), where N is the number of hubs.
+3. Initialize a list to store packages that have dependencies.
 
-9. The update_hub_distance function updates the distance between two hubs in the Graph.distance dictionary. It inputs the two hubs and the new distance and updates the distances in both directions.
-a. Time Complexity: O(1), as it involves updating dictionary entries.
+packages_with_dependencies = []
+
+Complexity: O(1) - Constant time complexity for list initialization.
+
+4. Read package dependency data from a CSV file. For each entry, find the corresponding package object from the hash table using the package ID, and add the dependency package ID to the package's dependencies list.
+
+dependencies = read_csv("dependency_data.csv")
+
+for dependency_data in dependencies:
+    package_id = dependency_data.package_id
+    dependency_id = dependency_data.dependency_id
+
+    package = hash_table[package_id]
+    package.dependencies.append(dependency_id)
+
+    packages_with_dependencies.append(package)
+
+Complexity: O(m) - Linear time complexity, where m is the number of dependencies in the CSV file.
+
+5. Create a Truck object and initialize a list to store delivered packages.
+
+truck = create_truck_object()
+delivered_packages = []
+
+Complexity: O(1) - Constant time complexity for object initialization.
+
+6. While there are undelivered packages:
+   7. Load packages onto the truck until the truck's capacity is reached or no more packages are available for delivery.
+   8. Calculate the distance to the nearest neighbor package based on the current location of the truck.
+   9. Update the truck's clock and miles driven based on the distance traveled.
+   10. Deliver the package to the nearest neighbor location and update its status.
+   11. Add the delivered package to the list of delivered packages.
+   12. Repeat steps 8-11 until all packages are delivered.
+
+while packages_with_dependencies or truck.has_space_for_packages():
+    packages_to_load = select_packages_to_load(truck, packages_with_dependencies)
+    truck.load_packages(packages_to_load)
+
+    nearest_neighbor_package = calculate_nearest_neighbor(truck)
+    distance = calculate_distance(truck.location, nearest_neighbor_package.location)
+
+    truck.update_clock_and_miles(distance)
+
+    package_to_deliver = truck.deliver_package(nearest_neighbor_package)
+    delivered_packages.append(package_to_deliver)
+
+    if package_to_deliver in packages_with_dependencies:
+        packages_with_dependencies.remove(package_to_deliver)
+
+Complexity:
+- Loading packages: O(k), where k is the number of packages loaded onto the truck.
+- Calculating nearest neighbor: O(p), where p is the number of undelivered packages.
+- Calculating distance: O(1) - Constant time complexity assuming distance calculation is efficient.
+- Updating clock and miles: O(1) - Constant time complexity.
+- Delivering package: O(1) - Constant time complexity.
+- Removing delivered package from dependencies: O(p), where p is the number of undelivered packages.
+- Overall complexity for each iteration: O(k + p)
+
+
+13. Print the delivery status and details of all delivered packages.
+
+print_delivery_status(delivered_packages)
+
+Complexity: O(d), where d is the number of delivered packages.
 
 Overall, the time complexity of Dijkstra's shortest path algorithm applied to this software solution is dominated by the iterations over the hubs and edges in the graph, resulting in a time complexity of O((N + E) log V), where N is the number of hubs and E is the number of edges.
 
-2. The programming environment used to create the Python application is the PyCharm CE editor with Python 3.8.
+2. The programming environment used to create the Python application is the PyCharm CE editor with Python 3.8 on an Apple MacBook Pro 2021 with an M1 Apple silicon chip and 32 GB of memory running macOS Ventura 13.3.1
 
 3. The space-time complexity of each major segment of the program and the entire program using big-O notation are as follows:
 a. The time complexity of Dijkstra's algorithm is O((N + E) log N), where N is the number of hubs/vertices and E is the number of edges in the graph.
 b. The time complexity of reading the package data file is O(n).
 c. The space complexity of storing the package data in the hash table is O(n).
 
-4. The solution can scale and adapt to a growing number of packages because Dijkstra's algorithm can handle large graphs efficiently. As the number of packages increases, the algorithm will still find the shortest paths to deliver the packages efficiently.
+4. The solution can scale and adapt to many packages because Dijkstra's algorithm can handle large graphs efficiently. As the number of packages increases, the algorithm will still find the shortest paths to deliver the packages efficiently.
 
-5. The software is efficient and easy to maintain because Dijkstra's algorithm is a well-known and widely used algorithm for finding the shortest paths in a graph. The code is modular and follows good coding practices, making it easy to understand, modify, and update.
+5. The program is efficient due to using hash tables for fast package lookup, reducing the time complexity of package retrieval operations. Additionally, the algorithm optimizes package delivery by considering nearest neighbor locations, minimizing the distance traveled by the truck. The code follows good programming practices, such as modularization, encapsulation, and separation of concerns, making it easier to understand, modify, and maintain. Clear variable naming and proper documentation further contribute to the program's readability and maintainability.
 
-6. The strengths of Dijkstra's algorithm include its ability to find the shortest path between two nodes in a graph, its efficiency in handling large graphs, and its guarantee to find the optimal solution. The weakness is that it may perform poorly on graphs with negative edge weights, but this is not a concern in the given scenario, as the distances provided are equal regardless of the direction traveled.
+6. Self-adjusting data structures, such as hash tables, provide efficient search and retrieval operations by adapting to the data distribution. Hash tables offer constant-time average-case complexity for insertion, deletion, and lookup operations. They are particularly effective for scenarios where fast access to data based on a unique key is required. However, hash tables may have higher memory overhead compared to other data structures, and collisions can occur, affecting performance. Additionally, the efficiency of hash tables depends on choosing a suitable hash function and managing hash collisions effectively.
 
-C. The code implementation's entry point for the delivery of all the packages is in the attached "main.py" file.
+C. The code implementation's entry point for delivering all the packages is in the attached "main.py" file.
 
 D.
 1. The self-adjusting data structure used in the program is a hash table to store the package data. The package ID is used as the key to access the package data. The hash table enables fast access to package data with a constant time complexity of O(1).
@@ -60,9 +117,9 @@ F.
 G.
 H.
 A simple UI with an option-based menu to request package and truck delivery status was implemented in "main.py."
-1. "screenshots/EOD_report_option1.png" is a screenshot depicting choice 1, "Display report of the end-of-day," where the trucks are loaded and sent on their routes to deliver all packages to their respective addresses and ultimately arriving back to the parent hub.
+1. "screenshots/EOD_report_option1.png" is a screenshot depicting choice 1, "Display report of the end-of-day," where the trucks are loaded and sent on their routes to deliver all packages to their respective addresses and ultimately arrive back to the parent hub.
 2. "screenshots/EOD_report_option2_840.png, screenshots/EOD_report_option2_1015.png, screenshots/EOD_report_option2_1312.png" are screenshots displaying, "Display summary report for a given time," where the user is asked to enter a specific time between 8 and 5 pm. The input is validated, and a report with the status of all packages and trucks at the requested time is provided.
-3. "screenshots/EOD_report_option3_830_930_1130_package_9.png" is the last screenshot for option 3, where a user is able to pick a specific time and package. The input is validated, and the output results in the full status of the package at the provided time by the user.
+3. "screenshots/EOD_report_option3_830_930_1130_package_9.png" is the last screenshot for option 3, where a user can pick a specific time and package. The input is validated, and the output results in the full status of the package at the provided time by the user.
 
 I. Justification of the core algorithm:
 1. Strengths of Dijkstra's Shortest Path Algorithm:
@@ -70,16 +127,16 @@ a. Optimal Solution: Dijkstra's algorithm guarantees to find the shortest path f
 b. Scalability: Dijkstra's algorithm can handle large graphs efficiently. As the number of packages or delivery locations increases, the algorithm's time complexity remains relatively stable, making it suitable for scaling to accommodate a growing number of packages.
 
 2. Verification of Algorithm Requirements:
-a. Dijkstra's algorithm meets all the requirements in the scenario. It calculates the shortest paths from the hub (source node) to all delivery locations (other nodes) in the graph, ensuring efficient routes for the trucks. The algorithm considers the distances provided in the distance table, taking into account the specific delivery constraints and deadlines of each package. By finding the shortest paths, it allows the trucks to deliver all 40 packages on time while keeping the combined total distance traveled under 140 miles for both trucks.
+a. Dijkstra's algorithm meets all the requirements in the scenario. It calculates the shortest paths from the hub (source node) to all delivery locations (other nodes) in the graph, ensuring efficient routes for the trucks. The algorithm considers the distances provided in the distance table, taking into account each package's specific delivery constraints and deadlines. Finding the shortest paths allows the trucks to deliver all 40 packages on time while keeping the combined total distance traveled under 140 miles for both trucks.
 
 3. Two other named algorithms that would meet the requirements:
 a. A* Search Algorithm: A* search is an informed search algorithm that combines elements of Dijkstra's algorithm and heuristic functions. It uses heuristics to guide the search toward the goal node, improving the algorithm's efficiency by considering estimated distances. In the scenario, A* search could be applied to find the optimal routes for the delivery trucks while considering the actual and estimated distances based on heuristics.
-b. Genetic Algorithm: Genetic algorithms are population-based optimization algorithms inspired by natural evolution processes. They involve creating a population of candidate solutions and iteratively applying selection, crossover, and mutation operations to improve the solutions' fitness. In the scenario, a genetic algorithm could be used to optimize the routes and schedules of the delivery trucks. By evolving and improving the population of routes over iterations, the algorithm would converge towards a set of efficient routes that meet the delivery constraints.
+b. Genetic Algorithm: Genetic algorithms are population-based optimization algorithms inspired by natural evolution processes. They involve creating a population of candidate solutions and iteratively applying selection, crossover, and mutation operations to improve the solutions' fitness. In the scenario, a genetic algorithm could be used to optimize the routes and schedules of the delivery trucks. The algorithm would converge towards a set of efficient routes that meet the delivery constraints by evolving and improving the population of routes over iterations.
 
 J.
 1. If I were to do this project again, and with PLENTY more time, apart from the two algorithms mentioned above, I would consider the following approaches with more research:
-a. Ant Colony Optimization (ACO): ACO is a metaheuristic algorithm inspired by the foraging behavior of ants. It involves simulating the pheromone deposition and trail-following behavior of ants to find good solutions to optimization problems. In the scenario, ACO could be applied to find efficient routes for the delivery trucks by simulating the pheromone trails and making use of local and global pheromone updates. Isn't that cool?!.
-b. Simulated Annealing: Simulated annealing is a probabilistic optimization algorithm that mimics the annealing process in metallurgy. It starts with an initial solution and iteratively explores the solution space, allowing for occasional uphill moves to escape local optima. In the scenario, simulated annealing could be used to find near-optimal routes for the trucks by gradually reducing the exploration of less favorable routes while focusing on improving the overall solution.
+a. Ant Colony Optimization (ACO): ACO is a metaheuristic algorithm inspired by the foraging behavior of ants. It involves simulating the pheromone deposition and trail-following behavior of ants to find good solutions to optimization problems. In the scenario, ACO could be applied to find efficient routes for the delivery trucks by simulating the pheromone trails and using local and global pheromone updates. Isn't that cool?!.
+b. Simulated Annealing: Simulated annealing is a probabilistic optimization algorithm that mimics the annealing process in metallurgy. It starts with an initial solution and iteratively explores the solution space, allowing occasional uphill moves to escape local optima. In the scenario, simulated annealing could be used to find near-optimal routes for the trucks by gradually reducing the exploration of less favorable routes while focusing on improving the overall solution.
 
 K. Justification of the data structure:
 1. Verification of Data Structure Requirements:
@@ -90,10 +147,10 @@ b. Changes in the number of trucks or cities would not significantly affect the 
 
 2. Two other data structures that could meet the same requirements:
 a. Binary Search Tree (BST): A BST is a sorted binary tree data structure where each node's key is greater than all keys in its left subtree and smaller than all keys in its right subtree. In the scenario, a BST could be used to store the package data sorted by package ID. This would allow efficient lookup operations with a time complexity of O(log n), where n is the number of packages. However, the space usage would still be linear, similar to the hash table.
-b. Graph Database: A graph database is a data storage and query system that represents data as nodes, edges, and properties. It provides efficient traversal and querying of graph structures. In the scenario, a graph database could be used to store the package data as nodes, with relationships representing connections between packages, trucks, and cities. This would allow flexible and efficient retrieval of package information based on different criteria. However, implementing and maintaining a graph database might introduce additional complexity compared to a simpler data structure like a hash table.
+b. Graph Database: A graph database is a data storage and query system representing data as nodes, edges, and properties. It provides efficient traversal and querying of graph structures. In the scenario, a graph database could store the package data as nodes, with relationships representing connections between packages, trucks, and cities. This would allow flexible and efficient retrieval of package information based on different criteria. However, implementing and maintaining a graph database might introduce additional complexity compared to a simpler data structure like a hash table.
 
 L. Sources:
-No sources were used as references in completing this task as the information provided above is based on general knowledge and understanding of algorithms and data structures except for statements declaring them as "future research," for which I've provided the readings below to summarize my interest.
+No sources were used as references in completing this task. The information provided above is based on general knowledge and understanding of algorithms and data structures except for statements declaring them as "future research," for which I've provided the readings below to summarize my interest.
 
 * GeeksforGeeks. "A* Search Algorithm." GeeksforGeeks, 18 May 2023, https://www.geeksforgeeks.org/a-search-algorithm/.
 * TutorialsPoint. "Genetic Algorithms Quick Guide." TutorialsPoint, 18 May 2023, https://www.tutorialspoint.com/genetic_algorithms/genetic_algorithms_quick_guide.htm.
