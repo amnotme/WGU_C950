@@ -1,4 +1,3 @@
-from dataclasses import dataclass, field
 from datetime import datetime, time, timedelta
 from typing import List
 
@@ -10,10 +9,9 @@ from constants import (
 from models.package import Package
 
 
-@dataclass
 class Truck:
     """
-        A dataclass used to create a truck object that will hold a
+        A model class used to create a truck object that will hold a
         package objects.
 
     Attributes:
@@ -27,13 +25,14 @@ class Truck:
         truck_clock: A truck object's internal clock for delivery confirmation
     """
 
-    truck_id: int
-    packages: List[Package] = field(default_factory=list)
-    speed: float = field(default_factory=lambda: MAX_TRUCK_DISTANCE_PER_SECOND)
-    miles: float = field(default_factory=lambda: 0.0)
-    capacity: int = field(default_factory=lambda: MAX_TRUCK_CAPACITY)
-    status: str = field(default_factory=lambda: AT_HUB_TEXT)
-    truck_clock: datetime = field(default_factory=lambda: datetime.today())
+    def __init__(self, truck_id):
+        self.truck_id = truck_id
+        self.packages: List[Package] = []
+        self.miles = 0.0
+        self.truck_clock = datetime.today()
+        self.capacity = MAX_TRUCK_CAPACITY
+        self.status = AT_HUB_TEXT
+        self.speed = MAX_TRUCK_DISTANCE_PER_SECOND
 
     def __repr__(self):
         """

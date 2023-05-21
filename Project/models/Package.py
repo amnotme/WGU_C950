@@ -1,10 +1,5 @@
-import datetime
-from dataclasses import dataclass
-
-
-@dataclass
 class Package:
-    """A dataclass to create a package object that then gets
+    """A model to create a package object that then gets
     stored into a hash table and truck object.
 
     Attributes:
@@ -19,21 +14,16 @@ class Package:
         notes: Any additional notes about the package.
     """
 
-    package_id: int
-    address: str
-    city: str
-    state: str
-    zipcode: int
-    delivery_time: datetime
-    weight: float
-    status: str
-    notes: str
+    def __init__(self, package_id, address, city, state, zipcode, delivery_time, weight, status, notes):
+        self.package_id = package_id
+        self.address = address
+        self.city = city
+        self.state = state
+        self.zipcode = zipcode
+        self.delivery_time = delivery_time
+        self.weight = weight
+        self.status = status
+        self.notes = notes
 
-    def __repr__(self) -> str:
-        """
-        Returns the string representation of a package object.
-        """
-        return f"Package ID: {self.package_id}, " \
-               f"Delivery address: {self.address}, " \
-               f"Deliver by: {self.delivery_time}, " \
-               f"Status: {self.status}"
+    def __repr__(self):
+        return f"Package ID: {self.package_id}, Delivery address: {self.address}, Deliver by: {self.delivery_time}, Status: {self.status}"

@@ -1,6 +1,6 @@
 from datetime import datetime, time, timedelta
 from typing import List, Optional, Tuple
-
+import copy
 from constants import (
     AT_HUB_TEXT, BR_DELAYED_UNTIL_NINE_FIVE,
     BR_MUST_BE_DELIVERED, BR_MUST_BE_DELIVERED_WITH_ONE,
@@ -11,9 +11,9 @@ from constants import (
     BR_WRONG_ADDRESS, DEFAULT_DELIVERY_END_TIME,
     DEFAULT_DELIVERY_START_TIME,
     DEFAULT_MAXIMUM_NUMBER_OF_PACKAGES, DELAYED_START_TIME,
-    DELIVERY_DATE, DISTANCES_DATA_FILE,
+    DELIVERY_DATE,
     MAX_NUMBER_OF_TRUCKS_TO_DISPATCH, MAX_TRUCK_CAPACITY,
-    PACKAGES_DATA_FILE, TRUCK_ONE_PACKAGES,
+    TRUCK_ONE_PACKAGES,
     TRUCK_THREE_PACKAGES, TRUCK_TWO_PACKAGES
 )
 
@@ -24,14 +24,13 @@ from src.data_loader import Loader
 from src.graph import Graph
 from src.hash_map import HashMap
 from src.parser import Parser
-from utils.visualizer import visualize_graph
 
 
 class Dispatcher:
     graph: Graph
     hubs: List[Hub]
     indexed_packages: HashMap
-    trucks: List[Truck] = []
+    trucks: List[Truck]
     business_rules: HashMap
 
     def __init__(self):
@@ -69,10 +68,10 @@ class Dispatcher:
         """
 
         # Initialize a hubs parser
-        hubs_parser: Parser = Parser(file_path=DISTANCES_DATA_FILE)
+        hubs_parser: Parser = Parser()
 
         # Load the hubs from the data file
-        return Loader.load_hubs(hubs_parser=hubs_parser)
+        return Loader.load_hubs_from_csv(hubs_parser=hubs_parser)
 
     def _parse_packages(self):
         """
@@ -89,10 +88,10 @@ class Dispatcher:
         """
 
         # Initialize a packages parser
-        packages_parser: Parser = Parser(file_path=PACKAGES_DATA_FILE)
+        packages_parser: Parser = Parser()
 
         # Load the packages from the data file
-        packages: List[Package] = Loader.load_packages(packages_parser=packages_parser)
+        packages: List[Package] = Loader.load_packages_from_csv(packages_parser=packages_parser)
 
         # Initialize a hash map to index the packages
         indexed_packages: HashMap = HashMap(
@@ -129,10 +128,9 @@ class Dispatcher:
         graph = Loader.load_graph_hubs(graph=graph, hubs=self.hubs)
 
         # Load the distances between the hubs from the distances data file
-        distances_parser: Parser = Parser(file_path=DISTANCES_DATA_FILE)
-        return Loader.load_graph_distances(
+        distances_parser: Parser = Parser()
+        return Loader.load_graph_distances_from_csv(
             graph=graph,
-            distances_parser=distances_parser,
             hubs=self.hubs
         )
 
@@ -179,6 +177,7 @@ class Dispatcher:
             trucks.append(
                 Truck(truck_id=truck_id)
             )
+
         return trucks
 
     def load_truck_with_packages(self, truck_id: int) -> None:

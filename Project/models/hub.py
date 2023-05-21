@@ -1,8 +1,7 @@
 import math
-from dataclasses import dataclass, field
+from typing import Optional
 
 
-@dataclass(unsafe_hash=True)
 class Hub:
     """
     Model class for a hub.  A hub is a location / node.
@@ -19,11 +18,18 @@ class Hub:
         previous_hub: The previous hub in the shortest path from the start hub.
         distance: The distance from the start hub to this hub.
     """
-    hub_name: str
-    address: str
-    zipcode: int
-    previous_hub: "Hub" = field(default_factory=lambda: None)
-    distance: float = field(default_factory=lambda: math.inf)
+
+    def __init__(
+            self,
+            hub_name: str,
+            address: str,
+            zipcode: int
+    ):
+        self.hub_name = hub_name
+        self.address = address
+        self.zipcode = zipcode
+        self.previous_hub: Optional["Hub"] = None
+        self.distance: float = math.inf
 
     def __repr__(self):
         """
