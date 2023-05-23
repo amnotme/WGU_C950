@@ -6,7 +6,7 @@ from constants import (
     MAX_TRUCK_DISTANCE_PER_SECOND
 )
 
-from models.package import Package
+from model.package import Package
 
 
 class Truck:

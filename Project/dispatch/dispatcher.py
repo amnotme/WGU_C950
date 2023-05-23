@@ -1,6 +1,5 @@
 from datetime import datetime, time, timedelta
 from typing import List, Optional, Tuple
-import copy
 from constants import (
     AT_HUB_TEXT, BR_DELAYED_UNTIL_NINE_FIVE,
     BR_MUST_BE_DELIVERED, BR_MUST_BE_DELIVERED_WITH_ONE,
@@ -17,9 +16,9 @@ from constants import (
     TRUCK_THREE_PACKAGES, TRUCK_TWO_PACKAGES
 )
 
-from models.hub import Hub
-from models.package import Package
-from models.truck import Truck
+from model.hub import Hub
+from model.package import Package
+from model.truck import Truck
 from src.data_loader import Loader
 from src.graph import Graph
 from src.hash_map import HashMap

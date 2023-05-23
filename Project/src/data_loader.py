@@ -6,8 +6,8 @@ from constants import (
     DISTANCES_CSV_FILE, PACKAGES_CSV_FILE
 )
 
-from models.hub import Hub
-from models.package import Package
+from model.hub import Hub
+from model.package import Package
 from src.graph import Graph
 from src.parser import Parser
 

@@ -1,7 +1,7 @@
 import math
 from typing import Dict, List, Optional, Tuple
 
-from models.hub import Hub
+from model.hub import Hub
 
 
 class Graph:
