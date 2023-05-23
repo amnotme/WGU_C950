@@ -30,6 +30,9 @@ class ColorPrinter:
     UNDERLINE = "\033[4m"
     END = "\033[0m"
 
+    # Flag to enable ANSI colors. Ensure your system supports them before enabling it.
+    USE_ANSI_COLORS = False
+
     def print_color(self, text: str, color_code: str, terminate_color: bool = True):
         """
         Prints the specified text with the provided color code.
@@ -40,14 +43,20 @@ class ColorPrinter:
             terminate_color (bool): Flag denoting if you would like to reset to original color
                 NOTE: setting terminate to False will require that you terminate color explicitly.
         """
-        if terminate_color:
-            print(color_code + text + ColorPrinter.END)
+        if self.USE_ANSI_COLORS:
+            if terminate_color:
+                print(color_code + text + ColorPrinter.END)
+            else:
+                print(color_code + text)
         else:
-            print(color_code + text)
+            print(text)
 
     def reset_color(self):
         """
         Resets the text formatting to the default color.
 
         """
-        print(ColorPrinter.END)
+        if self.USE_ANSI_COLORS:
+            print(ColorPrinter.END)
+        else:
+            pass

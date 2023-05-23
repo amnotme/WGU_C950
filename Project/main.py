@@ -289,4 +289,8 @@ if __name__ == "__main__":
     """
     menu: MainMenu = MainMenu()
 
+    # Uncomment below if your machine is able to interpet ANSI code colors.
+    # Hint: Command Prompt on windows doesn't support it but if you run on VSCode it should work. ^_^
+
+    # menu.printer.USE_ANSI_COLORS = True
     menu.interface()

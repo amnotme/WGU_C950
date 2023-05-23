@@ -1,8 +1,0 @@
-[flake8]
-exclude =
-    graph.pdf,
-    graph,
-    venv/,
-    README.md,
-    __init__.py,
-    data/
