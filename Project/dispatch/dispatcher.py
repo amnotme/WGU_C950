@@ -619,18 +619,3 @@ class Dispatcher:
                     if package.package_id == 19 or package.package_id == 15:
                         br_packages_count += 1
                 return br_packages_count == 2
-
-    def _graph_visualize(self) -> None:
-        """
-        Visualizes the graph.
-
-        This method visualizes the graph by calling a function to visualize it.
-
-        Args:
-            self: The current instance of the class.
-
-        Returns:
-            None.
-        """
-
-        visualize_graph(self.graph)

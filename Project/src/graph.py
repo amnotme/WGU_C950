@@ -54,7 +54,6 @@ class Graph:
 
     def get_distance(self, start_hub: Hub, end_hub: Hub) -> float:
         """
-        TODO Might have to come back here to redo this logic
         Gets distance between two hubs as long as
         these are already in the adjacency list.
 
